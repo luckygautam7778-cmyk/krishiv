@@ -1,6 +1,23 @@
 module.exports = (req, res, next) => {
   const crypto = require('crypto');
 
+  // ─── Fallback diagnostics (run for all requests) ───
+  // This will confirm whether CSRF middleware is reached and whether session/cookies persist.
+  // Keep payload small: do not log token values.
+  console.warn('[CSRF-DIAG][MW_ENTER]', {
+    method: req.method,
+    path: req.path,
+    originalUrl: req.originalUrl,
+    sessionID: typeof req.sessionID === 'string' ? req.sessionID : undefined,
+    hasCookieHeader: Boolean(req.headers?.cookie),
+    cookieHeaderLen: req.headers?.cookie ? req.headers.cookie.length : 0,
+    protocol: req.protocol,
+    secure: req.secure,
+    xForwardedProto: req.get('x-forwarded-proto'),
+    hasSessionCsrfToken: Boolean(req.session?.csrfToken)
+  });
+
+
   // Ensure token exists in session (stable across multi-step checkout)
   if (!req.session) {
     // If session is somehow missing, treat as invalid for unsafe methods
