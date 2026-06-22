@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || 'Krishiv - Traditional Indian Poshak' %></title>
+  <meta name="description" content="<%= settings?.metaDescription || 'Krishiv - Premium Handcrafted Poshak for Ladoo Gopal & Deity Idols. Shop traditional poshak sets, mukut, and accessories.' %>" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            maroon: { DEFAULT: '#7B1536', light: '#9B2048', dark: '#5C0F28', pale: '#F5E6EC' },
+            gold:   { DEFAULT: '#C9A84C', light: '#DFC06A', dark: '#A8882E', pale: '#FBF5E6' },
+            cream:  { DEFAULT: '#FFF8F0', dark: '#F5E6D3' },
+          },
+          fontFamily: {
+            playfair: ['"Playfair Display"', 'Georgia', 'serif'],
+            raleway:  ['Raleway', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <script>
+    // Expose CSRF token for client-side fetch() calls
+    window.csrfToken = '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
+  </script>
+</head>
+<body class="font-raleway bg-cream text-gray-800 min-h-screen flex flex-col">
+
+  <!-- ═══════════ TOP BAR ═══════════ -->
+  <div class="bg-maroon text-cream text-xs py-1.5 px-4 text-center tracking-widest">
+    <span class="mr-4">✦ Free Shipping on Orders Above ₹999 ✦</span>
+    <% if (settings?.phone) { %>
+      <a href="tel:<%= settings.phone %>" class="hover:text-gold transition-colors">
+        <i class="fas fa-phone mr-1"></i><%= settings.phone %>
+      </a>
+    <% } %>
+  </div>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3 group">
+          <% if (settings?.logo) { %>
+            <img src="<%= settings.logo %>" alt="<%= settings.businessName %>" class="h-12 w-auto" />
+          <% } else { %>
+            <div class="flex flex-col leading-none">
+              <span class="font-playfair text-2xl md:text-3xl font-bold text-maroon group-hover:text-maroon-light transition-colors">
+                <%= settings?.businessName || 'Poshaak' %>
+              </span>
+              <span class="text-gold text-xs tracking-[0.3em] font-raleway font-medium uppercase">
+                Traditional Poshak
+              </span>
+            </div>
+          <% } %>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>">Home</a>
+          <a href="/products" class="nav-link <%= currentPath.startsWith('/products') ? 'active' : '' %>">Shop</a>
+          <a href="/about" class="nav-link <%= currentPath === '/about' ? 'active' : '' %>">About</a>
+          <a href="/contact" class="nav-link <%= currentPath === '/contact' ? 'active' : '' %>">Contact</a>
+
+        </div>
+
+
+
+        <!-- Cart + Menu -->
+        <div class="flex items-center gap-4">
+          <!-- Cart Button -->
+          <a href="/cart" class="relative flex items-center gap-2 bg-maroon text-white px-4 py-2 rounded-full font-raleway font-medium text-sm hover:bg-maroon-light transition-all duration-200 hover:shadow-lg">
+            <i class="fas fa-shopping-bag"></i>
+            <span class="hidden sm:inline">Cart</span>
+            <span id="cartBadge" class="<%= cartCount > 0 ? '' : 'hidden' %> absolute -top-2 -right-2 bg-gold text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+              <%= cartCount %>
+            </span>
+          </a>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobileMenuBtn" class="md:hidden text-maroon hover:text-maroon-light p-2" aria-label="Menu">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 py-4 space-y-2">
+        <a href="/" class="block px-4 py-2 text-gray-700 hover:text-maroon hover:bg-maroon-pale rounded-lg transition-colors">Home</a>
+        <a href="/products" class="block px-4 py-2 text-gray-700 hover:text-maroon hover:bg-maroon-pale rounded-lg transition-colors">Shop</a>
+        <a href="/about" class="block px-4 py-2 text-gray-700 hover:text-maroon hover:bg-maroon-pale rounded-lg transition-colors">About</a>
+        <a href="/contact" class="block px-4 py-2 text-gray-700 hover:text-maroon hover:bg-maroon-pale rounded-lg transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════ FLASH MESSAGES ═══════════ -->
+  <% if (success_msg && success_msg.length > 0) { %>
+    <div id="flashSuccess" class="fixed top-24 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm animate-fade-in">
+      <i class="fas fa-check-circle text-lg"></i>
+      <span><%= success_msg %></span>
+      <button onclick="this.parentElement.remove()" class="ml-auto text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+  <% } %>
+  <% if (error_msg && error_msg.length > 0) { %>
+    <div id="flashError" class="fixed top-24 right-4 z-50 bg-red-600 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm animate-fade-in">
+      <i class="fas fa-exclamation-circle text-lg"></i>
+      <span><%= error_msg %></span>
+      <button onclick="this.parentElement.remove()" class="ml-auto text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+  <% } %>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="flex-grow">
+
+  <%- include('whatsapp-links') %>
+

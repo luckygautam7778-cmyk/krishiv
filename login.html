@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login | Krishiv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { maroon: { DEFAULT:'#7B1536', light:'#9B2048', dark:'#5C0F28', pale:'#F5E6EC' }, gold: { DEFAULT:'#C9A84C' } },
+        fontFamily: { playfair:['"Playfair Display"','serif'], raleway:['Raleway','sans-serif'] }
+      }}
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+</head>
+<body class="font-raleway bg-gradient-to-br from-maroon-dark via-maroon to-maroon-light min-h-screen flex items-center justify-center px-4"
+      style="background: linear-gradient(135deg, #3D0A1A 0%, #5C0F28 40%, #7B1536 100%);">
+
+  <!-- Decorative dots -->
+  <div class="fixed inset-0 opacity-5" style="background-image:radial-gradient(circle, #C9A84C 1px, transparent 1px); background-size:30px 30px;"></div>
+
+  <div class="relative w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <h1 class="font-playfair text-4xl font-bold text-white mb-1">Krishiv</h1>
+      <p class="text-gold text-sm tracking-[0.3em] uppercase">Admin Panel</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+      <div class="flex items-center gap-3 mb-6 pb-5 border-b border-gray-100">
+        <div class="w-10 h-10 bg-maroon rounded-full flex items-center justify-center">
+          <i class="fas fa-user-shield text-white text-sm"></i>
+        </div>
+        <div>
+          <h2 class="font-playfair text-xl font-bold text-gray-800">Welcome Back</h2>
+          <p class="text-gray-400 text-xs">Sign in to manage your store</p>
+        </div>
+      </div>
+
+      <!-- Flash Messages -->
+      
+      
+
+
+
+      <form action="/admin/login" method="POST" class="space-y-5">
+
+        <input type="hidden" name="csrf" value="6d7dc27f63f6075d23766ba794cac981aec2d5c18ff038f1" />
+
+        <!-- Username -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Username or Email</label>
+          <div class="relative">
+            <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" name="username" required autofocus
+                   placeholder="Enter username or email"
+                   class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+          <div class="relative">
+            <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="password" name="password" id="passwordInput" required
+                   placeholder="Enter password"
+                   class="w-full pl-10 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+            <button type="button" onclick="togglePassword()"
+                    class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              <i id="eyeIcon" class="fas fa-eye text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-maroon hover:bg-maroon-light text-white font-raleway font-semibold py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg flex items-center justify-center gap-2 mt-2">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </form>
+
+      <p class="text-center text-xs text-gray-400 mt-6">
+        <i class="fas fa-shield-alt mr-1"></i>
+        Secure Admin Access Only
+      </p>
+    </div>
+
+    <div class="text-center mt-6">
+      <a href="/" class="text-white/60 hover:text-gold text-sm transition-colors">
+        <i class="fas fa-arrow-left mr-1"></i> Back to Store
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('passwordInput');
+      const icon = document.getElementById('eyeIcon');
+      input.type = input.type === 'password' ? 'text' : 'password';
+      icon.className = input.type === 'password' ? 'fas fa-eye text-sm' : 'fas fa-eye-slash text-sm';
+    }
+  </script>
+</body>
+</html>

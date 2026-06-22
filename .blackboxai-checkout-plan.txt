@@ -1,0 +1,52 @@
+Checkout development plan (UPI + OTP + screenshot + COD)
+
+1) Admin settings
+- Ensure Settings has editable fields for upiId and enableCOD/codFeeAmount (already present in model; UI currently lacks UPI input).
+
+2) Routes & controllers
+- Replace current POST /checkout (placeOrder) immediate order creation.
+- Add endpoints:
+  - GET  /checkout               (render multi-step UI)
+  - POST /checkout/init        (Buy Now: validate delivery details, generate OTP, store checkout session data; DO NOT create Order yet)
+  - POST /checkout/verify-otp  (verify OTP; mark otpVerified in session)
+  - POST /checkout/upload-screenshot (if online payment: accept image, store upload path in session)
+  - POST /checkout/confirm     (only after OTP verified and (UPI screenshot uploaded OR COD chosen). Then create Order, reduce stock, clear cart)
+
+3) Checkout UI (views/checkout.ejs)
+- Multi-step sections with hidden fields.
+- Step 1 Buy Now: delivery + payment method + (for COD) fee display.
+- Step 2 OTP input: show masked phone; allow resend.
+- Step 3:
+  - Online: show UPI payment details, dynamic UPI QR, and screenshot upload.
+  - COD: directly allow “Confirm Order” after OTP.
+
+4) Order creation rules
+- In confirm endpoint:
+  - If paymentMethod === Online: require otpVerified && screenshotUploaded
+  - If paymentMethod === COD: require otpVerified (and set codFee)
+- Stock reduction + cart clearing must happen only inside confirm.
+
+5) Persistence
+- Use req.session.checkoutDraft object to store:
+  - delivery fields
+  - paymentMethod, codFee, totalAmount
+  - otpSent + otpExpires
+  - otpVerified
+  - screenshotPath (for online)
+
+6) After order creation
+- Create Order document with:
+  - paymentMethod
+  - paymentStatus: Pending (until admin verification) or Paid if you later add verification.
+  - otpVerified flag
+  - notes: include screenshot info if desired
+- Clear active cart items.
+
+7) Validation & UX
+- If session draft missing/expired: redirect to /checkout with flash message.
+- Disable buttons while posting.
+
+8) Smoke test
+- Online flow: init -> verify OTP -> upload screenshot -> confirm -> order-success shows correct messaging.
+- COD flow: init -> verify OTP -> confirm -> order-success.
+

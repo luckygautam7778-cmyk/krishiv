@@ -1,0 +1,129 @@
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<div class="bg-maroon text-white py-14 px-4 text-center">
+  <p class="text-gold uppercase tracking-[0.4em] text-xs font-medium mb-3">Get in Touch</p>
+  <h1 class="font-playfair text-4xl md:text-5xl font-bold mb-3">Contact Us</h1>
+  <p class="text-white/70 max-w-lg mx-auto">We'd love to hear from you! Reach out for orders, queries, or custom poshak requests.</p>
+</div>
+
+<section class="py-14 bg-cream">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+
+      <!-- Contact Info -->
+      <div class="lg:col-span-2 space-y-5">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="font-playfair text-xl font-bold text-gray-800 mb-5">Reach Us</h2>
+
+          <% if (settings?.phone) { %>
+          <a href="tel:<%= settings.phone %>" class="flex items-start gap-4 mb-5 group">
+            <div class="w-11 h-11 bg-maroon-pale rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-maroon transition-colors">
+              <i class="fas fa-phone text-maroon group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 mb-0.5">Phone / Call</p>
+              <p class="font-semibold text-gray-700 group-hover:text-maroon transition-colors"><%= settings.phone %></p>
+            </div>
+          </a>
+          <% } %>
+
+          <% if (settings?.whatsapp) { %>
+          <a href="https://wa.me/<%= settings.whatsapp %>" target="_blank" class="flex items-start gap-4 mb-5 group">
+            <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-green-500 transition-colors">
+              <i class="fab fa-whatsapp text-green-500 group-hover:text-white transition-colors text-lg"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 mb-0.5">WhatsApp</p>
+              <p class="font-semibold text-gray-700 group-hover:text-green-600 transition-colors">+<%= settings.whatsapp %></p>
+            </div>
+          </a>
+          <% } else { %>
+          <a href="https://wa.me/919876543210" target="_blank" class="flex items-start gap-4 mb-5 group">
+            <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-green-500 transition-colors">
+              <i class="fab fa-whatsapp text-green-500 group-hover:text-white transition-colors text-lg"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 mb-0.5">WhatsApp</p>
+              <p class="font-semibold text-gray-700">Chat on WhatsApp</p>
+            </div>
+          </a>
+          <% } %>
+
+          <% if (settings?.email) { %>
+          <a href="mailto:<%= settings.email %>" class="flex items-start gap-4 mb-5 group">
+            <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500 transition-colors">
+              <i class="fas fa-envelope text-blue-500 group-hover:text-white transition-colors"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 mb-0.5">Email</p>
+              <p class="font-semibold text-gray-700 group-hover:text-blue-600 transition-colors break-all"><%= settings.email %></p>
+            </div>
+          </a>
+          <% } %>
+
+          <% if (settings?.address) { %>
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 bg-maroon-pale rounded-xl flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-map-marker-alt text-maroon"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-gray-400 mb-0.5">Address</p>
+              <p class="font-medium text-gray-700 text-sm leading-relaxed">617, SDC the destination, lalapura road, jaipur</p>
+            </div>
+          </div>
+          <% } %>
+
+        </div>
+
+        <!-- Business Hours -->
+        <div class="bg-maroon text-white rounded-2xl p-6">
+          <h3 class="font-playfair text-lg font-bold mb-4 text-gold">Business Hours</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between text-white/80"><span>Monday – Saturday</span><span class="text-gold font-medium">9 AM – 8 PM</span></div>
+            <div class="flex justify-between text-white/80"><span>Sunday</span><span class="text-gold font-medium">10 AM – 5 PM</span></div>
+            <div class="flex justify-between text-white/80"><span>WhatsApp</span><span class="text-gold font-medium">24/7 Support</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="lg:col-span-3">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <h2 class="font-playfair text-xl font-bold text-gray-800 mb-6">Send Us a Message</h2>
+          <form action="/contact" method="POST" id="contactForm" class="space-y-5">
+            <input type="hidden" name="csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Your Name <span class="text-red-500">*</span></label>
+                <input type="text" name="name" required placeholder="Full name"
+                       class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Mobile Number <span class="text-red-500">*</span></label>
+                <input type="tel" name="phone" required placeholder="10-digit number"
+                       class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Email (Optional)</label>
+              <input type="email" name="email" placeholder="your@email.com"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Message <span class="text-red-500">*</span></label>
+              <textarea name="message" required rows="5" placeholder="Write your message here... (e.g., custom order, bulk inquiry, query about a product)"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all resize-none"></textarea>
+            </div>
+            <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 bg-maroon hover:bg-maroon-light text-white font-raleway font-semibold py-4 px-8 rounded-xl transition-all hover:shadow-lg">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

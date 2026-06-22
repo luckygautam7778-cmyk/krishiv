@@ -1,0 +1,102 @@
+<%- include('partials/header') %>
+
+<!-- Hero -->
+<section class="relative bg-maroon text-white py-20 md:py-28 overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle, #C9A84C 1px, transparent 1px); background-size: 30px 30px;"></div>
+  <div class="relative max-w-4xl mx-auto text-center px-4">
+    <p class="text-gold uppercase tracking-[0.4em] text-xs font-medium mb-4">Our Story</p>
+    <h1 class="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">About <span class="text-gold"><%= settings?.businessName || 'Krishiv' %></span></h1>
+    <p class="text-white/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+      <%= settings?.tagline || 'Handcrafted divine poshak for Ladoo Gopal, crafted with devotion and love.' %>
+    </p>
+  </div>
+</section>
+
+<!-- Story Section -->
+<section class="py-16 md:py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <p class="text-gold uppercase tracking-widest text-xs font-medium mb-3">Who We Are</p>
+        <h2 class="font-playfair text-3xl md:text-4xl font-bold text-gray-800 mb-6">Devotion in Every Stitch</h2>
+        <div class="space-y-4 text-gray-600 leading-relaxed">
+          <% if (settings?.aboutUs) { %>
+            <p><%= settings.aboutUs %></p>
+          <% } else { %>
+            <p>Welcome to <strong><%= settings?.businessName || 'Krishiv' %></strong> — your trusted source for handcrafted traditional poshak for Ladoo Gopal and deity idols. Born from a deep devotion to Lord Krishna, our journey began with a simple mission: to dress the divine with the finest garments made from the heart.</p>
+            <p>Every poshak, mukut, and accessory in our collection is lovingly handcrafted by skilled artisans using premium fabrics, crystals, pearls, and embroideries that reflect the rich cultural heritage of Indian devotional tradition.</p>
+            <p>From the smallest Ladoo Gopal to the grandest deity idol, we have the perfect poshak for every size and every occasion — be it daily worship, Janmashtami, Annakut, or any auspicious celebration.</p>
+          <% } %>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-maroon rounded-2xl p-8 text-white text-center">
+          <p class="font-playfair text-5xl font-bold text-gold mb-2">500+</p>
+          <p class="text-white/80 text-sm">Unique Designs</p>
+        </div>
+        <div class="bg-gold rounded-2xl p-8 text-white text-center">
+          <p class="font-playfair text-5xl font-bold mb-2">10K+</p>
+          <p class="text-white/80 text-sm">Happy Devotees</p>
+        </div>
+        <div class="bg-cream-dark rounded-2xl p-8 text-center">
+          <p class="font-playfair text-5xl font-bold text-maroon mb-2">Pan</p>
+          <p class="text-gray-600 text-sm">India Delivery</p>
+        </div>
+        <div class="bg-maroon-pale rounded-2xl p-8 text-center">
+          <p class="font-playfair text-5xl font-bold text-maroon mb-2">COD</p>
+          <p class="text-gray-600 text-sm">Available</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="py-16 bg-cream-dark">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="font-playfair text-3xl md:text-4xl font-bold text-gray-800">Our Values</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-8 shadow-sm text-center hover:shadow-md transition-shadow">
+        <div class="w-16 h-16 bg-maroon-pale rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-pray text-maroon text-2xl"></i>
+        </div>
+        <h3 class="font-playfair text-xl font-bold text-gray-800 mb-3">Devotion First</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Every product is made with utmost devotion and respect for the divine. We treat each poshak as an offering to the Lord.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm text-center hover:shadow-md transition-shadow">
+        <div class="w-16 h-16 bg-gold-pale rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-medal text-gold text-2xl"></i>
+        </div>
+        <h3 class="font-playfair text-xl font-bold text-gray-800 mb-3">Quality Craftsmanship</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">We use only premium materials — rich fabrics, genuine crystals, freshwater pearls — to ensure every piece is worthy of the divine.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm text-center hover:shadow-md transition-shadow">
+        <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-users text-green-500 text-2xl"></i>
+        </div>
+        <h3 class="font-playfair text-xl font-bold text-gray-800 mb-3">Customer Happiness</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Your satisfaction is our greatest reward. We are always just a WhatsApp message away for any help or custom orders.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="py-16 bg-maroon text-white text-center px-4">
+  <i class="fas fa-om text-gold text-4xl mb-4 block"></i>
+  <h2 class="font-playfair text-3xl font-bold mb-4">Let's Connect!</h2>
+  <p class="text-white/70 mb-8 max-w-xl mx-auto">Whether you have a question, a custom order request, or just want to say Jai Shri Krishna — we'd love to hear from you.</p>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="/contact" class="inline-flex items-center justify-center gap-2 bg-white text-maroon hover:bg-cream px-8 py-4 rounded-full font-raleway font-semibold transition-all hover:shadow-lg">
+      <i class="fas fa-envelope"></i> Contact Us
+    </a>
+    <a href="https://wa.me/<%= settings?.whatsapp || '919876543210' %>" target="_blank"
+       class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-raleway font-semibold transition-all">
+      <i class="fab fa-whatsapp text-lg"></i> WhatsApp Us
+    </a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+<section class="py-10 md:py-14 bg-cream min-h-[60vh]">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <% if (notFound) { %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+        <i class="fas fa-search text-gray-400 text-4xl mb-4 block"></i>
+        <h1 class="font-playfair text-2xl font-bold text-gray-800 mb-2">Order not found</h1>
+        <p class="text-gray-500 mb-6">Check your order number and try again.</p>
+        <a href="/orders" class="inline-flex items-center justify-center bg-maroon hover:bg-maroon-light text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm">Go to Order History</a>
+      </div>
+    <% } else { %>
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 class="font-playfair text-3xl font-bold text-gray-800">Tracking</h1>
+            <p class="text-gray-500 mt-1">Order #<%= order.orderNumber %></p>
+          </div>
+          <span class="text-xs px-3 py-1.5 rounded-full font-semibold
+            <%= order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+               order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+               order.status === 'Packed' ? 'bg-yellow-100 text-yellow-700' :
+               order.status === 'Shipped' ? 'bg-purple-100 text-purple-700' :
+               order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+               order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+               'bg-red-100 text-red-700' %>">
+            <%= order.status %>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="md:col-span-2">
+            <h2 class="font-playfair text-lg font-bold text-gray-800 mb-3">Status Updates</h2>
+            <div class="space-y-3">
+              <% (order.statusHistory || []).slice().reverse().forEach(h => { %>
+                <div class="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <div class="w-2.5 h-2.5 rounded-full bg-maroon mt-1"></div>
+                  <div>
+                    <p class="font-semibold text-gray-800 text-sm"><%= h.status %></p>
+                    <p class="text-xs text-gray-500"> <%= new Date(h.updatedAt).toLocaleString('en-IN') %></p>
+                    <% if (h.note) { %>
+                      <p class="text-xs text-gray-600 mt-1"><%= h.note %></p>
+                    <% } %>
+                  </div>
+                </div>
+              <% }) %>
+              <% if (!order.statusHistory || order.statusHistory.length === 0) { %>
+                <div class="text-sm text-gray-500">No updates yet.</div>
+              <% } %>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="font-playfair text-lg font-bold text-gray-800 mb-3">Delivery Tracking</h2>
+            <div class="space-y-3 text-sm">
+              <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Carrier</p>
+                <p class="font-semibold text-gray-700"><%= order.tracking?.carrier || '-' %></p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tracking ID</p>
+                <p class="font-semibold text-gray-700 break-all"><%= order.tracking?.trackingId || '-' %></p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tracking Link</p>
+                <% if (order.tracking?.trackingUrl) { %>
+                  <a class="text-maroon font-semibold hover:underline" href="<%= order.tracking.trackingUrl %>" target="_blank" rel="noopener">Open link</a>
+                <% } else { %>
+                  <p class="font-semibold text-gray-700">-</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <a href="/orders" class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-xl transition-all text-sm">Back to Orders</a>
+          <a href="/products" class="inline-flex items-center justify-center bg-maroon hover:bg-maroon-light text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm">Continue Shopping</a>
+        </div>
+      </div>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+

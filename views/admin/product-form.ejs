@@ -1,0 +1,265 @@
+<%- include('../partials/admin-header') %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="/admin/products" class="w-9 h-9 bg-white border border-gray-200 rounded-xl flex items-center justify-center hover:border-maroon hover:text-maroon transition-colors text-gray-400">
+      <i class="fas fa-arrow-left text-sm"></i>
+    </a>
+    <div>
+      <h2 class="text-lg font-semibold text-gray-700"><%= isEdit ? 'Edit Product' : 'Add New Product' %></h2>
+      <p class="text-xs text-gray-400"><%= isEdit ? 'Update product information' : 'Fill in the details to add a new product' %></p>
+    </div>
+  </div>
+
+  <form action="<%= isEdit ? `/admin/products/edit/${product._id}` : '/admin/products/add' %>"
+        method="POST" enctype="multipart/form-data" id="productForm">
+
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Main Details -->
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Basic Info -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2"><i class="fas fa-info-circle text-maroon text-sm"></i> Basic Information</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name <span class="text-red-500">*</span></label>
+              <input type="text" name="name" required value="<%= isEdit ? product.name : '' %>"
+                     placeholder="e.g., Pink Crystal Poshak Set for Ladoo Gopal"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">SKU <span class="text-red-500">*</span></label>
+              <input type="text" name="sku" required value="<%= isEdit ? (product.sku || '') : '' %>"
+                     placeholder="e.g., KRS-POSHAK-0001"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+              <p class="text-xs text-gray-400 mt-1">Must be unique across all products.</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Category <span class="text-red-500">*</span></label>
+              <select name="category" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all text-gray-600">
+                <option value="">Select a category</option>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat._id %>" <%= isEdit && product.category && product.category._id.toString() === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Description <span class="text-red-500">*</span></label>
+              <textarea name="description" required rows="5"
+                        placeholder="Describe the poshak in detail — fabric, embellishments, occasion, idol size it fits..."
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon transition-all resize-none"><%= isEdit ? product.description : '' %></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing & Stock -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2"><i class="fas fa-rupee-sign text-maroon text-sm"></i> Pricing & Stock</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">MRP (₹) <span class="text-red-500">*</span></label>
+<input type="number" name="price" required min="0" step="0.01" value="<%= isEdit ? product.price : '' %>"
+                     placeholder="0" autocomplete="off" inputmode="numeric"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Sale Price (₹)</label>
+<input type="number" name="discountPrice" min="0" step="0.01" value="<%= isEdit && product.discountPrice ? product.discountPrice : '' %>"
+                     placeholder="Leave blank if no discount" autocomplete="off" inputmode="numeric"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock Qty <span class="text-red-500">*</span></label>
+<input type="number" name="stock" required min="0" value="<%= isEdit ? product.stock : 10 %>"
+                     autocomplete="off" inputmode="numeric"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Attributes -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2"><i class="fas fa-tags text-maroon text-sm"></i> Product Attributes</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Fabric / Material</label>
+              <input type="text" name="fabric" value="<%= isEdit ? product.fabric : '' %>"
+                     placeholder="e.g., Silk, Velvet, Net"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Occasion</label>
+              <input type="text" name="occasion" value="<%= isEdit ? product.occasion : '' %>"
+                     placeholder="e.g., Janmashtami, Daily Worship"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Colors</label>
+              <input type="text" name="colors" value="<%= isEdit && product.colors ? product.colors.join(', ') : (isEdit ? product.color : '') %>"
+                     placeholder="e.g., Red, Blue, Gold"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+              <p class="text-xs text-gray-400 mt-1">Comma-separated (saved to colors[])</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Sizes Available</label>
+              <input type="text" name="sizes" value="<%= isEdit && product.sizes ? product.sizes.join(', ') : '' %>"
+                     placeholder="e.g., XS, S, M, L, XL, XXL or custom"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+              <p class="text-xs text-gray-400 mt-1">Comma-separated (saved to sizes[])</p>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Tags</label>
+              <input type="text" name="tags" value="<%= isEdit && product.tags ? product.tags.join(', ') : '' %>"
+                     placeholder="e.g., ladoo gopal, krishna, poshak (comma separated)"
+                     class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Panel -->
+      <div class="space-y-5">
+
+        <!-- Images -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2"><i class="fas fa-images text-maroon text-sm"></i> Product Images</h3>
+
+          <!-- Existing images (edit mode) -->
+          <% if (isEdit && product.images && product.images.length > 0) { %>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+              <% product.images.forEach((img, i) => { %>
+                <div class="relative group">
+                  <img src="<%= img %>" alt="Image <%= i+1 %>" class="w-full aspect-square object-cover rounded-lg border border-gray-100" />
+                  <label class="absolute inset-0 bg-red-500/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg cursor-pointer">
+                    <input type="checkbox" name="removeImages" value="<%= img %>" class="sr-only" onchange="this.parentElement.style.background = this.checked ? 'rgba(239,68,68,0.8)' : ''" />
+                    <i class="fas fa-trash text-white text-sm"></i>
+                    <span class="text-white text-xs ml-1">Remove</span>
+                  </label>
+                </div>
+              <% }) %>
+            </div>
+            <p class="text-xs text-gray-400 mb-3">Hover images to remove them. Add more below.</p>
+          <% } %>
+
+          <!-- Upload New -->
+          <div class="border-2 border-dashed border-gray-200 hover:border-maroon rounded-xl p-5 text-center cursor-pointer transition-colors" onclick="document.getElementById('imageInput').click()">
+            <i class="fas fa-cloud-upload-alt text-3xl text-gray-300 mb-2 block"></i>
+            <p class="text-sm text-gray-400">Click to upload images</p>
+            <p class="text-xs text-gray-300 mt-1">Max 6 images, 5MB each. JPEG, PNG, WebP</p>
+          </div>
+          <input type="file" name="images" id="imageInput" multiple accept="image/*" class="hidden" onchange="previewImages(this)" />
+          <div id="imagePreview" class="grid grid-cols-3 gap-2 mt-3"></div>
+        </div>
+
+        <!-- Publish Settings -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-semibold text-gray-700 mb-4 flex items-center gap-2"><i class="fas fa-cog text-maroon text-sm"></i> Publish</h3>
+          <div class="space-y-4">
+
+            <!-- Product Status -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Status</label>
+              <select name="productStatus"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all text-gray-600">
+                <% ['Draft','Active','Out of Stock','Archived','Hidden'].forEach(s => { %>
+                  <option value="<%= s %>" <%= isEdit && product.productStatus === s ? 'selected' : '' %>><%= s %></option>
+                <% }) %>
+              </select>
+              <p class="text-xs text-gray-400 mt-1">Availability is derived from stock when status is Active.</p>
+            </div>
+
+            <!-- Homepage visibility -->
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-700">Visibility on Homepage</p>
+                <p class="text-xs text-gray-400">Homepage section control</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="visibilityOnHomepage" value="on" class="sr-only peer"
+                       <%= !isEdit || product.visibilityOnHomepage ? 'checked' : '' %> />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-maroon after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+              </label>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">Active / Visible (legacy toggle)</label>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="active" value="true" class="sr-only peer"
+                       <%= !isEdit || product.active ? 'checked' : '' %> />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-maroon after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+              </label>
+              <p class="text-xs text-gray-400 mt-1">Kept to avoid breaking older storefront filters.</p>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-700">Featured Product</p>
+                <p class="text-xs text-gray-400">Show on homepage (featured)</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" name="featured" value="on" class="sr-only peer"
+                       <%= isEdit && product.featured ? 'checked' : '' %> />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-gold after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+              </label>
+            </div>
+
+            <!-- Scheduled pricing (optional - one entry) -->
+            <div>
+              <h4 class="text-sm font-semibold text-gray-700 mb-2">Scheduled Price Change (optional)</h4>
+              <div class="grid grid-cols-1 gap-3">
+                <input type="datetime-local" name="scheduleEffectiveAt"
+                       value=""
+                       class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <input type="number" name="schedulePrice" min="0" step="0.01" placeholder="New MRP (₹)"
+                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+                  <input type="number" name="scheduleDiscountPrice" min="0" step="0.01" placeholder="New Discount (₹)"
+                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+                </div>
+              </div>
+              <p class="text-xs text-gray-400 mt-1">When the effective time passes, admin/shops will apply automatically.</p>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- Submit -->
+        <button type="submit" class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-4 rounded-xl transition-all hover:shadow-lg flex items-center justify-center gap-2 text-base">
+          <i class="fas fa-<%= isEdit ? 'save' : 'plus-circle' %>"></i>
+          <%= isEdit ? 'Update Product' : 'Add Product' %>
+        </button>
+        <a href="/admin/products" class="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-500 hover:border-maroon hover:text-maroon py-3 rounded-xl transition-all text-sm font-medium">
+          Cancel
+        </a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<%- include('../partials/admin-footer') %>
+
+<script>
+function previewImages(input) {
+  const preview = document.getElementById('imagePreview');
+  preview.innerHTML = '';
+  Array.from(input.files).slice(0, 6).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const div = document.createElement('div');
+      div.className = 'relative';
+      div.innerHTML = `<img src="${e.target.result}" class="w-full aspect-square object-cover rounded-lg border border-gray-100" /><div class="absolute top-0.5 right-0.5 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center"><i class="fas fa-check text-[8px]"></i></div>`;
+      preview.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+</script>

@@ -1,0 +1,136 @@
+<%- include('../partials/admin-header') %>
+
+<!-- Filter Bar -->
+<form method="GET" action="/admin/orders" class="bg-white rounded-xl p-4 mb-5 shadow-sm border border-gray-100 flex flex-wrap gap-3 items-center">
+  <input type="text" name="search" value="<%= query.search || '' %>" placeholder="Search by order#, name, phone..."
+         class="flex-1 min-w-[200px] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-maroon" />
+
+  <select name="status" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-maroon text-gray-600">
+    <option value="">All Status</option>
+    <% statusList.forEach(s => { %>
+      <option value="<%= s %>" <%= query.status === s ? 'selected' : '' %>><%= s %></option>
+    <% }) %>
+  </select>
+
+  <select name="paymentStatus" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-maroon text-gray-600">
+    <option value="">All Payment</option>
+    <option value="Payment Verification Pending" <%= query.paymentStatus === 'Payment Verification Pending' ? 'selected' : '' %>>Pending Verification</option>
+    <option value="Paid" <%= query.paymentStatus === 'Paid' ? 'selected' : '' %>>Paid</option>
+    <option value="Payment Rejected" <%= query.paymentStatus === 'Payment Rejected' ? 'selected' : '' %>>Rejected</option>
+  </select>
+
+  <button type="submit" class="bg-maroon text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-maroon-light transition-colors">Filter</button>
+
+  <% if (query.search || query.status || query.paymentStatus) { %>
+    <a href="/admin/orders" class="text-gray-400 hover:text-maroon text-sm">Clear</a>
+  <% } %>
+
+  <span class="ml-auto text-xs text-gray-400 font-medium"><%= total %> orders</span>
+</form>
+
+
+<!-- Orders Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+  <% if (orders.length === 0) { %>
+    <div class="text-center py-16 text-gray-300">
+      <i class="fas fa-shopping-cart text-5xl mb-3 block"></i>
+      <p class="text-sm text-gray-400">No orders found.</p>
+    </div>
+  <% } else { %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="text-left px-5 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Order</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Customer</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Items</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Amount</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Status</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Payment Status</th>
+
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Date</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Action</th>
+
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% orders.forEach(order => { %>
+            <tr class="hover:bg-gray-50/50 transition-colors">
+              <td class="px-5 py-4">
+                <p class="font-bold text-maroon">#<%= order.orderNumber %></p>
+                <p class="text-xs text-gray-400 mt-0.5">Payment: <%= order.paymentMethod || 'Online Payment' %></p>
+                <% if (typeof order.codFee === 'number' && order.codFee > 0) { %>
+                  <p class="text-xs text-gray-400">COD Fee: ₹<%= order.codFee.toFixed(0) %></p>
+                <% } %>
+                <% if (order.verifiedPhoneNumber) { %>
+                  <p class="text-xs text-gray-400">Verified: <%= order.verifiedPhoneNumber %></p>
+                <% } %>
+              </td>
+              <td class="px-4 py-4">
+                <p class="font-semibold text-gray-700"><%= order.customer.name %></p>
+                <p class="text-xs text-gray-400"><%= order.customer.phone %></p>
+                <p class="text-xs text-gray-400 truncate max-w-[130px]"><%= order.customer.city %>, <%= order.customer.state %></p>
+              </td>
+              <td class="px-4 py-4">
+                <p class="font-semibold text-gray-700"><%= order.items.length %> item<%= order.items.length > 1 ? 's' : '' %></p>
+                <p class="text-xs text-gray-400 truncate max-w-[120px]"><%= order.items[0]?.productName %><%= order.items.length > 1 ? ` +${order.items.length-1}` : '' %></p>
+              </td>
+              <td class="px-4 py-4">
+                <p class="font-bold text-gray-800">₹<%= order.totalAmount.toFixed(0) %></p>
+              </td>
+              <td class="px-4 py-4">
+                <span class="text-xs px-2.5 py-1 rounded-full font-semibold
+                  <%= order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                     order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+                     order.status === 'Packed' ? 'bg-yellow-100 text-yellow-700' :
+                     order.status === 'Shipped' ? 'bg-purple-100 text-purple-700' :
+                     order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+                     order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                     'bg-red-100 text-red-700' %>">
+                  <%= order.status %>
+                </span>
+              </td>
+              <td class="px-4 py-4">
+                <% const ps = order.paymentStatus || 'Pending'; %>
+                <span class="text-xs px-2.5 py-1 rounded-full font-semibold
+                  <%= ps === 'Payment Verification Pending' ? 'bg-yellow-100 text-yellow-700' :
+                     ps === 'Paid' ? 'bg-green-100 text-green-700' :
+                     ps === 'Payment Rejected' ? 'bg-red-100 text-red-700' :
+                     'bg-gray-100 text-gray-700' %>">
+                  <%= ps %>
+                </span>
+              </td>
+
+              <td class="px-4 py-4 text-xs text-gray-500">
+                <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) %>
+              </td>
+              <td class="px-4 py-4">
+                <a href="/admin/orders/<%= order._id %>"
+                   class="w-8 h-8 bg-maroon-pale hover:bg-maroon hover:text-white text-maroon rounded-lg flex items-center justify-center transition-all" title="View">
+                  <i class="fas fa-eye text-xs"></i>
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="flex items-center justify-between px-5 py-4 border-t border-gray-100">
+        <p class="text-sm text-gray-400">Page <%= currentPage %> of <%= totalPages %></p>
+        <div class="flex gap-2">
+          <% if (currentPage > 1) { %>
+            <a href="?<%= new URLSearchParams({...query, page: currentPage - 1}).toString() %>" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm hover:border-maroon hover:text-maroon transition-colors">Prev</a>
+          <% } %>
+          <% if (currentPage < totalPages) { %>
+            <a href="?<%= new URLSearchParams({...query, page: currentPage + 1}).toString() %>" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm hover:border-maroon hover:text-maroon transition-colors">Next</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>

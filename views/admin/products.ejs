@@ -1,0 +1,152 @@
+<%- include('../partials/admin-header') %>
+
+<!-- Header Row -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+  <div>
+    <h2 class="text-lg font-semibold text-gray-700">All Products (<%= total %>)</h2>
+  </div>
+  <a href="/admin/products/add"
+     class="inline-flex items-center gap-2 bg-maroon hover:bg-maroon-light text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-all hover:shadow-md">
+    <i class="fas fa-plus"></i> Add Product
+  </a>
+</div>
+
+<!-- Filter Bar -->
+<form method="GET" action="/admin/products" class="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100 flex flex-wrap gap-3">
+  <input type="text" name="search" value="<%= query.search || '' %>" placeholder="Search products..."
+         class="flex-1 min-w-[200px] border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-maroon" />
+  <select name="category" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-maroon text-gray-600">
+    <option value="">All Categories</option>
+    <% categories.forEach(cat => { %>
+      <option value="<%= cat._id %>" <%= query.category === cat._id.toString() ? 'selected' : '' %>><%= cat.name %></option>
+    <% }) %>
+  </select>
+  <button type="submit" class="bg-maroon text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-maroon-light transition-colors">Filter</button>
+  <% if (query.search || query.category) { %>
+    <a href="/admin/products" class="text-gray-400 hover:text-maroon text-sm flex items-center px-2">Clear</a>
+  <% } %>
+</form>
+
+<!-- Products Table -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+  <% if (products.length === 0) { %>
+    <div class="text-center py-16 text-gray-300">
+      <i class="fas fa-box-open text-5xl mb-3 block"></i>
+      <p class="text-sm text-gray-400">No products found.</p>
+      <a href="/admin/products/add" class="inline-flex items-center gap-2 bg-maroon text-white px-5 py-2.5 rounded-xl text-sm font-medium mt-4 hover:bg-maroon-light transition-colors">
+        <i class="fas fa-plus"></i> Add First Product
+      </a>
+    </div>
+  <% } else { %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th class="text-left px-5 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Product</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">SKU</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Category</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Price</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Stock</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Status</th>
+            <th class="text-left px-4 py-4 text-gray-500 font-semibold uppercase tracking-wider text-xs">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% products.forEach(product => { %>
+            <tr class="hover:bg-gray-50/50 transition-colors">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                    <% if (product.images && product.images.length > 0) { %>
+                      <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="w-full h-full object-cover" />
+                    <% } else { %>
+                      <div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-image text-lg"></i></div>
+                    <% } %>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-semibold text-gray-800 truncate max-w-[180px]"><%= product.name %></p>
+                    <p class="text-xs text-gray-400 mt-0.5"><%= product.images?.length || 0 %> images <%= product.featured ? '• ⭐ Featured' : '' %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4">
+                <span class="bg-gray-50 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium">
+                  <%= product.sku || '—' %>
+                </span>
+              </td>
+              <td class="px-4 py-4">
+                <span class="bg-maroon-pale text-maroon text-xs px-2.5 py-1 rounded-full font-medium">
+                  <%= product.category?.name || 'N/A' %>
+                </span>
+              </td>
+              <td class="px-4 py-4">
+                <% if (product.discountPrice && product.discountPrice < product.price) { %>
+                  <p class="font-bold text-maroon">₹<%= product.discountPrice %></p>
+                  <p class="text-xs text-gray-400 line-through">₹<%= product.price %></p>
+                <% } else { %>
+                  <p class="font-bold text-gray-700">₹<%= product.price %></p>
+                <% } %>
+              </td>
+              <td class="px-4 py-4">
+                <span class="<%= product.stock > 10 ? 'text-green-600' : product.stock > 0 ? 'text-yellow-600' : 'text-red-500' %> font-semibold">
+                  <%= product.stock %>
+                </span>
+              </td>
+              <td class="px-4 py-4">
+                <span class="<%= product.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' %> text-xs px-2.5 py-1 rounded-full font-medium">
+                  <%= product.productStatus || (product.active ? 'Active' : 'Inactive') %>
+                </span>
+              </td>
+
+
+
+
+
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-2">
+                  <a href="/admin/products/edit/<%= product._id %>"
+                     class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition-colors" title="Edit">
+                    <i class="fas fa-edit text-xs"></i>
+                  </a>
+                  <button onclick="deleteProduct('<%= product._id %>', <%- JSON.stringify(product.name || '') %>)"
+                          class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors" title="Delete">
+                    <i class="fas fa-trash text-xs"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="flex items-center justify-between px-5 py-4 border-t border-gray-100">
+        <p class="text-sm text-gray-400">Page <%= currentPage %> of <%= totalPages %></p>
+        <div class="flex gap-2">
+          <% if (currentPage > 1) { %>
+            <a href="?<%= new URLSearchParams({...query, page: currentPage - 1}).toString() %>" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm hover:border-maroon hover:text-maroon transition-colors">Prev</a>
+          <% } %>
+          <% if (currentPage < totalPages) { %>
+            <a href="?<%= new URLSearchParams({...query, page: currentPage + 1}).toString() %>" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm hover:border-maroon hover:text-maroon transition-colors">Next</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>
+
+<script>
+function deleteProduct(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  fetch(`/admin/products/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) { showAdminToast(data.message, 'success'); setTimeout(() => location.reload(), 1000); }
+      else showAdminToast(data.message, 'error');
+    });
+}
+</script>

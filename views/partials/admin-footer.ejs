@@ -1,0 +1,21 @@
+    </main>
+  </div>
+
+  <!-- Admin Scripts -->
+  <script src="/js/admin.js"></script>
+  <script>
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(() => {
+      document.getElementById('adminFlashSuccess')?.remove();
+      document.getElementById('adminFlashError')?.remove();
+    }, 5000);
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

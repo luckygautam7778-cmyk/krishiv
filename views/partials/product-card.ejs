@@ -1,0 +1,57 @@
+<div class="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-1 border border-gray-100">
+  <!-- Badge -->
+  <% if (product.discountPercent > 0) { %>
+    <span class="absolute top-3 left-3 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+      -<%= product.discountPercent %>%
+    </span>
+  <% } %>
+  <% if (product.featured) { %>
+    <span class="absolute top-3 right-3 z-10 bg-gold text-white text-xs font-bold px-2 py-1 rounded-full">
+      ★ Featured
+    </span>
+  <% } %>
+  <% if (product.stock === 0) { %>
+    <span class="absolute top-3 left-3 z-10 bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+      Out of Stock
+    </span>
+  <% } %>
+
+  <!-- Image -->
+  <a href="/products/<%= product.slug %>" class="block overflow-hidden aspect-square bg-gray-50">
+    <% if (product.images && product.images.length > 0) { %>
+      <img src="<%= product.images[0] %>" alt="<%= product.name %>"
+           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+    <% } %>
+
+  </a>
+
+  <!-- Info -->
+  <div class="p-4">
+    <% if (product.category) { %>
+      <p class="text-gold text-xs uppercase tracking-wider font-medium mb-1"><%= product.category.name %></p>
+    <% } %>
+    <a href="/products/<%= product.slug %>">
+      <h3 class="font-playfair text-base font-semibold text-gray-800 hover:text-maroon transition-colors line-clamp-2 leading-snug"><%= product.name %></h3>
+    </a>
+
+    <div class="flex items-center justify-between mt-3">
+      <div>
+        <% if (product.discountPrice && product.discountPrice < product.price) { %>
+          <span class="font-bold text-maroon text-lg">₹<%= product.discountPrice %></span>
+          <span class="text-gray-400 text-sm line-through ml-1">₹<%= product.price %></span>
+        <% } else { %>
+          <span class="font-bold text-maroon text-lg">₹<%= product.price %></span>
+        <% } %>
+      </div>
+
+      <% if (product.stock > 0) { %>
+        <button onclick="addToCart('<%= product._id %>')"
+                class="bg-maroon hover:bg-maroon-light text-white text-xs px-3 py-2 rounded-full transition-all duration-200 hover:shadow-md flex items-center gap-1.5 font-raleway font-medium">
+          <i class="fas fa-plus text-xs"></i> Add
+        </button>
+      <% } else { %>
+        <span class="text-gray-400 text-xs">Unavailable</span>
+      <% } %>
+    </div>
+  </div>
+</div>

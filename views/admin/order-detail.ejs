@@ -1,0 +1,258 @@
+<%- include('../partials/admin-header') %>
+
+<div class="max-w-5xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="/admin/orders" class="w-9 h-9 bg-white border border-gray-200 rounded-xl flex items-center justify-center hover:border-maroon hover:text-maroon transition-colors text-gray-400">
+      <i class="fas fa-arrow-left text-sm"></i>
+    </a>
+    <div>
+      <h2 class="text-lg font-semibold text-gray-700">Order #<%= order.orderNumber %></h2>
+      <p class="text-xs text-gray-400"><%= new Date(order.createdAt).toLocaleString('en-IN') %></p>
+    </div>
+    <span class="ml-auto text-sm px-3 py-1.5 rounded-full font-semibold
+      <%= order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+         order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+         order.status === 'Packed' ? 'bg-yellow-100 text-yellow-700' :
+         order.status === 'Shipped' ? 'bg-purple-100 text-purple-700' :
+         order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+         order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+         'bg-red-100 text-red-700' %>">
+      <%= order.status %>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Order Items + Customer -->
+    <div class="lg:col-span-2 space-y-5">
+
+      <!-- Items -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-playfair text-base font-bold text-gray-800 mb-4">Ordered Items</h3>
+        <div class="space-y-4">
+          <% order.items.forEach(item => { %>
+            <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
+              <div class="w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
+                <% if (item.productImage) { %>
+                  <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="w-full h-full object-cover" />
+                <% } else { %>
+                  <div class="w-full h-full flex items-center justify-center text-gray-200"><i class="fas fa-image"></i></div>
+                <% } %>
+              </div>
+              <div class="flex-grow">
+                <p class="font-semibold text-gray-700 text-sm"><%= item.productName %></p>
+                <p class="text-xs text-gray-400 mt-0.5">Qty: <%= item.quantity %> × ₹<%= item.price.toFixed(0) %></p>
+              </div>
+              <p class="font-bold text-gray-800">₹<%= item.totalPrice.toFixed(0) %></p>
+            </div>
+          <% }) %>
+        </div>
+          <div class="border-t border-gray-100 mt-4 pt-4 space-y-2 text-sm">
+          <div class="flex justify-between text-gray-500"><span>Subtotal</span><span>₹<%= order.subtotal.toFixed(0) %></span></div>
+          <% if (order.shippingCharge > 0) { %>
+            <div class="flex justify-between text-gray-500"><span>Shipping</span><span>₹<%= order.shippingCharge.toFixed(0) %></span></div>
+          <% } else { %>
+            <div class="flex justify-between text-gray-500"><span>Shipping</span><span class="text-green-600">FREE</span></div>
+          <% } %>
+          <div class="flex justify-between font-bold text-lg border-t border-gray-100 pt-2">
+            <span class="text-gray-800">Total</span>
+            <span class="text-maroon font-playfair">₹<%= order.totalAmount.toFixed(0) %></span>
+          </div>
+
+          <div class="flex justify-between text-gray-500 text-xs"><span>Payment</span><span class="font-medium text-gray-700"><%= order.paymentMethod || 'Online Payment' %></span></div>
+          <div class="flex justify-between text-gray-500 text-xs"><span>Payment Status</span><span class="font-medium text-gray-700"><%= order.paymentStatus || 'Pending' %></span></div>
+          <% if (typeof order.codFee === 'number' && order.codFee > 0) { %>
+            <div class="flex justify-between text-gray-500 text-xs"><span>COD Fee</span><span class="font-medium text-gray-700">₹<%= order.codFee.toFixed(0) %></span></div>
+          <% } %>
+          <% if (order.verifiedPhoneNumber) { %>
+            <div class="flex justify-between text-gray-500 text-xs"><span>Verified Phone</span><span class="font-medium text-gray-700"><%= order.verifiedPhoneNumber %></span></div>
+          <% } %>
+        </div>
+        <% if (order.notes) { %>
+          <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-3">
+            <p class="text-xs font-medium text-yellow-700 mb-1">Customer Note:</p>
+            <p class="text-sm text-gray-600"><%= order.notes %></p>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Payment Verification -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-playfair text-base font-bold text-gray-800 mb-4">Payment Verification</h3>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between text-gray-500"><span>Payment Method</span><span class="font-medium text-gray-700"><%= order.paymentMethod || 'Online Payment' %></span></div>
+          <div class="flex justify-between text-gray-500"><span>Payment Status</span><span class="font-medium text-gray-700"><%= order.paymentStatus || 'Pending' %></span></div>
+          <div class="flex justify-between text-gray-500"><span>Order Status</span><span class="font-medium text-gray-700"><%= order.status || 'Pending' %></span></div>
+
+          <% const ps = order.paymentStatus || 'Pending'; %>
+          <div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+              <%= ps === 'Payment Verification Pending' ? 'bg-yellow-100 text-yellow-700' :
+                 ps === 'Paid' ? 'bg-green-100 text-green-700' :
+                 ps === 'Payment Rejected' ? 'bg-red-100 text-red-700' :
+                 'bg-gray-100 text-gray-700' %>">
+              <%= ps === 'Payment Verification Pending' ? '🟡 Payment Verification Pending' :
+                 ps === 'Paid' ? '🟢 Paid' :
+                 ps === 'Payment Rejected' ? '🔴 Payment Rejected' : ps %>
+            </span>
+          </div>
+
+          <% if (order.payment?.screenshotPath) { %>
+            <div class="pt-2">
+              <p class="text-xs font-semibold text-gray-500 mb-2">Uploaded Screenshot Proof</p>
+              <a href="<%= order.payment.screenshotPath %>" target="_blank" class="block">
+                <img src="<%= order.payment.screenshotPath %>" alt="UPI Payment Screenshot" class="w-full max-h-72 object-contain rounded-xl border border-gray-100 bg-gray-50" />
+              </a>
+            </div>
+          <% } else { %>
+            <div class="pt-2">
+              <p class="text-xs font-semibold text-gray-500">Uploaded Screenshot Proof</p>
+              <p class="text-sm text-gray-400 mt-1">No screenshot uploaded.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="mt-4">
+          <% const pending = ps === 'Payment Verification Pending'; %>
+          <% if (pending) { %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <form action="/admin/orders/<%= order._id %>/approve-payment" method="POST">
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors">
+                  ✓ Approve Payment
+                </button>
+              </form>
+              <form action="/admin/orders/<%= order._id %>/reject-payment" method="POST">
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl text-sm transition-colors">
+                  ✕ Reject Payment
+                </button>
+              </form>
+            </div>
+          <% } else if (ps === 'Paid') { %>
+            <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-700 font-semibold">
+              Payment Approved
+            </div>
+          <% } else if (ps === 'Payment Rejected') { %>
+            <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 font-semibold">
+              Payment Rejected
+            </div>
+          <% } else { %>
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-700 font-semibold">
+              Payment Status: <%= ps %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Status History -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-playfair text-base font-bold text-gray-800 mb-4">Status History</h3>
+
+        <div class="space-y-3">
+          <% (order.statusHistory || []).slice().reverse().forEach(h => { %>
+            <div class="flex items-start gap-3">
+              <div class="w-2.5 h-2.5 rounded-full bg-maroon mt-1.5 flex-shrink-0"></div>
+              <div>
+                <p class="text-sm font-semibold text-gray-700"><%= h.status %></p>
+                <p class="text-xs text-gray-400"><%= new Date(h.updatedAt).toLocaleString('en-IN') %></p>
+                <% if (h.note) { %><p class="text-xs text-gray-500 mt-0.5"><%= h.note %></p><% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-5">
+
+      <!-- Customer Info -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-playfair text-base font-bold text-gray-800 mb-4">Customer Details</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex gap-3">
+            <i class="fas fa-user text-maroon mt-0.5 w-4 text-center flex-shrink-0"></i>
+            <div><p class="font-semibold text-gray-700"><%= order.customer.name %></p></div>
+          </div>
+          <div class="flex gap-3">
+            <i class="fas fa-phone text-maroon mt-0.5 w-4 text-center flex-shrink-0"></i>
+            <a href="tel:<%= order.customer.phone %>" class="text-gray-600 hover:text-maroon transition-colors"><%= order.customer.phone %></a>
+          </div>
+          <% if (order.customer.email) { %>
+          <div class="flex gap-3">
+            <i class="fas fa-envelope text-maroon mt-0.5 w-4 text-center flex-shrink-0"></i>
+            <p class="text-gray-600 break-all"><%= order.customer.email %></p>
+          </div>
+          <% } %>
+          <div class="flex gap-3">
+            <i class="fas fa-map-marker-alt text-maroon mt-0.5 w-4 text-center flex-shrink-0"></i>
+            <p class="text-gray-600 leading-relaxed"><%= order.customer.address %>, <%= order.customer.city %>, <%= order.customer.state %> - <%= order.customer.pincode %></p>
+          </div>
+        </div>
+        <a href="https://wa.me/<%= order.customer.phone.replace(/\D/g,'').length === 10 ? '91' + order.customer.phone.replace(/\D/g,'') : order.customer.phone.replace(/\D/g,'') %>?text=Hello%20<%= encodeURIComponent(order.customer.name) %>!%20Your%20Poshaak%20order%20%23<%= order.orderNumber %>%20update."
+           target="_blank"
+           class="mt-4 w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl text-sm font-medium transition-colors">
+          <i class="fab fa-whatsapp text-base"></i> WhatsApp Customer
+        </a>
+      </div>
+
+      <!-- Update Status -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="font-playfair text-base font-bold text-gray-800 mb-4">Update Status</h3>
+        <form action="/admin/orders/<%= order._id %>/status" method="POST" class="space-y-3">
+          <input type="hidden" name="csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>" />
+
+          <select name="status" required class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all text-gray-600">
+            <% statusList.forEach(s => { %>
+              <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+            <% }) %>
+          </select>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" name="trackingId" placeholder="Tracking ID (optional)"
+                   value="<%= order.tracking?.trackingId || '' %>"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            <input type="url" name="trackingUrl" placeholder="Tracking URL (optional)"
+                   value="<%= order.tracking?.trackingUrl || '' %>"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+
+          </div>
+
+          <input type="text" name="carrier" placeholder="Carrier (Shiprocket/Delhivery)"
+                 value="<%= order.tracking?.carrier || '' %>"
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+
+          <textarea name="note" rows="2" placeholder="Add a note (optional)"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-maroon transition-all resize-none"></textarea>
+          <button type="submit" class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-3 rounded-xl transition-all hover:shadow-md text-sm">
+            Update Status
+          </button>
+        </form>
+
+        <!-- Quick Actions -->
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <% ['Packed', 'Confirmed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled'].forEach(s => { %>
+            <form action="/admin/orders/<%= order._id %>/status" method="POST">
+              <input type="hidden" name="csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>" />
+              <input type="hidden" name="status" value="<%= s %>" />
+
+              <button type="submit"
+                      class="w-full text-xs py-2 rounded-lg border transition-all font-medium
+                      <%= s === 'Delivered' ? 'border-green-200 text-green-700 hover:bg-green-50' :
+                         s === 'Cancelled' ? 'border-red-200 text-red-600 hover:bg-red-50' :
+                         s === 'Out for Delivery' ? 'border-orange-200 text-orange-600 hover:bg-orange-50' :
+                         s === 'Shipped' ? 'border-purple-200 text-purple-600 hover:bg-purple-50' :
+                         s === 'Packed' ? 'border-yellow-200 text-yellow-700 hover:bg-yellow-50' :
+                         'border-blue-200 text-blue-600 hover:bg-blue-50' %>"
+                → <%= s %>
+              </button>
+            </form>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
+

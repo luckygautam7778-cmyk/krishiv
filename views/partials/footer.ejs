@@ -1,0 +1,105 @@
+  </main>
+
+
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="bg-gray-900 text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- Brand -->
+        <div>
+          <h3 class="font-playfair text-2xl font-bold text-gold mb-3"><%= settings?.businessName || 'Poshaak' %></h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4"><%= settings?.tagline || 'Traditional Elegance, Modern Grace' %></p>
+          <p class="text-gray-400 text-sm leading-relaxed"><%= settings?.aboutUs?.substring(0, 120) || 'Bringing you the finest traditional Indian clothing crafted with love and heritage.' %>...</p>
+          <div class="flex gap-3 mt-4">
+            <% if (settings?.facebook) { %>
+              <a href="<%= settings.facebook %>" target="_blank" class="w-9 h-9 bg-gray-700 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors"><i class="fab fa-facebook-f text-sm"></i></a>
+            <% } %>
+            <% if (settings?.instagram) { %>
+              <a href="<%= settings.instagram %>" target="_blank" class="w-9 h-9 bg-gray-700 hover:bg-pink-600 rounded-full flex items-center justify-center transition-colors"><i class="fab fa-instagram text-sm"></i></a>
+            <% } %>
+            <% const waDigits = (settings?.whatsapp || '').replace(/\D/g, ''); %>
+            <% if (waDigits) { %>
+              <a href="https://wa.me/<%= waDigits %>" target="_blank" class="w-9 h-9 bg-gray-700 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors"><i class="fab fa-whatsapp text-sm"></i></a>
+            <% } %>
+
+
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-playfair text-lg font-semibold text-gold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Home</a></li>
+            <li><a href="/products" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Shop All</a></li>
+            <li><a href="/about" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>About Us</a></li>
+            <li><a href="/contact" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Contact</a></li>
+            <li><a href="/cart" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Cart</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div>
+          <h4 class="font-playfair text-lg font-semibold text-gold mb-4">Collections</h4>
+          <ul class="space-y-2 text-sm">
+            <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+              <% categories.slice(0, 4).forEach(cat => { %>
+                <li><a href="/products?category=<%= cat.slug %>" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i><%= cat.name %></a></li>
+              <% }) %>
+            <% } else { %>
+              <li><a href="/products?category=poshak-sets" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Poshak Sets</a></li>
+              <li><a href="/products?category=mukut" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Mukut</a></li>
+              <li><a href="/products?category=ladoo-gopal" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Ladoo Gopal</a></li>
+              <li><a href="/products?category=festival-special" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>Festival Special</a></li>
+            <% } %>
+            <li><a href="/products" class="text-gray-400 hover:text-gold transition-colors flex items-center gap-2"><i class="fas fa-chevron-right text-xs text-gold"></i>View All</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h4 class="font-playfair text-lg font-semibold text-gold mb-4">Contact Us</h4>
+          <ul class="space-y-3 text-sm text-gray-400">
+            <% if (settings?.address) { %>
+              <li class="flex gap-3"><i class="fas fa-map-marker-alt text-gold mt-1 flex-shrink-0"></i><span>617, SDC the destination, lalapura road, jaipur</span></li>
+            <% } %>
+
+            <% if (settings?.phone) { %>
+              <li class="flex gap-3 items-center"><i class="fas fa-phone text-gold flex-shrink-0"></i><a href="tel:<%= settings.phone %>" class="hover:text-gold transition-colors"><%= settings.phone %></a></li>
+            <% } %>
+            <% if (settings?.email) { %>
+              <li class="flex gap-3 items-center"><i class="fas fa-envelope text-gold flex-shrink-0"></i><a href="mailto:<%= settings.email %>" class="hover:text-gold transition-colors break-all"><%= settings.email %></a></li>
+            <% } %>
+          </ul>
+          <div class="mt-4 flex items-center gap-2 text-xs text-gray-500">
+            <i class="fas fa-truck text-gold"></i>
+            <span>Cash on Delivery Available</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
+        <p>&copy; <%= new Date().getFullYear() %> <%= settings?.businessName || 'Poshaak' %>. All rights reserved. | Crafted with <i class="fas fa-heart text-maroon"></i> in India</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/main.js"></script>
+
+  <!-- Auto-hide flash messages -->
+  <script>
+    setTimeout(() => {
+      document.getElementById('flashSuccess')?.remove();
+      document.getElementById('flashError')?.remove();
+    }, 5000);
+
+    // Mobile menu toggle
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+      document.getElementById('mobileMenu')?.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

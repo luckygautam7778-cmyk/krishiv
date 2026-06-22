@@ -1,0 +1,67 @@
+<%- include('../partials/admin-header') %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="/admin/dashboard" class="w-9 h-9 bg-white border border-gray-200 rounded-xl flex items-center justify-center hover:border-maroon hover:text-maroon transition-colors">
+      <i class="fas fa-arrow-left text-sm"></i>
+    </a>
+    <div>
+      <h2 class="text-lg font-semibold text-gray-700">UPI QR Management</h2>
+      <p class="text-xs text-gray-400">Upload a single QR image. New upload replaces the active QR.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <h3 class="font-playfair text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fas fa-qrcode text-maroon"></i>
+        Upload Active QR
+      </h3>
+
+      <form action="/admin/upi-qr" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <input type="hidden" name="csrf" value="<%= csrfToken %>" />
+
+
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">QR Image</label>
+          <input type="file" name="qrCode" accept="image/*" required
+                 class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          <p class="text-xs text-gray-500 mt-2">Allowed: JPG/PNG/WebP. Max 2MB.</p>
+        </div>
+
+        <button type="submit" class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-3 rounded-xl text-sm transition-all hover:shadow-md">
+          <i class="fas fa-upload mr-2"></i>
+          Upload & Replace
+        </button>
+      </form>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <h3 class="font-playfair text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fas fa-eye text-maroon"></i>
+        Currently Active QR
+      </h3>
+
+      <% if (qrCode) { %>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex items-center justify-center">
+          <img src="<%= qrCode %>" alt="Active UPI QR" class="w-64 h-64 object-contain" />
+        </div>
+        <div class="mt-3 text-xs text-gray-500">
+          Last updated: <%= updatedAt ? new Date(updatedAt).toLocaleString('en-IN') : '-' %>
+        </div>
+      <% } else { %>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-6 text-center">
+          <i class="fas fa-qrcode text-gray-300 text-4xl mb-3 block"></i>
+          <p class="text-sm text-gray-500">No active QR uploaded yet.</p>
+          <p class="text-xs text-gray-400 mt-1">Customers will be blocked from placing online orders until a QR is uploaded.</p>
+        </div>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
+

@@ -1,0 +1,27 @@
+<%
+  const normalize = (v) => String(v ?? '').replace(/\D/g, '');
+  const waDigits = normalize(settings?.whatsapp);
+  const bizName = settings?.businessName || 'Poshaak';
+  const fallbackDigits = process.env.WHATSAPP_FALLBACK || '';
+  const finalDigits = waDigits || fallbackDigits;
+  const safeDigits = String(finalDigits || '').replace(/\D/g, '');
+
+  const build = (message) => {
+    if (!safeDigits) return '';
+    return `https://wa.me/${safeDigits}?text=${encodeURIComponent(message || '')}`;
+  };
+%>
+
+<% /* Floating WhatsApp button */ %>
+<% if (safeDigits) { %>
+  <a href="<%= build(`Hello ${bizName}! I am interested in your traditional poshak.`) %>"
+     target="_blank" rel="noopener"
+     class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl hover:shadow-green-300/50 transition-all duration-300 hover:scale-110"
+     title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp text-3xl"></i>
+  </a>
+<% } %>
+
+<% /* Return message builder for other partials */ %>
+<% /* NOTE: This file is included inside templates; do not output extra text */ %>
+

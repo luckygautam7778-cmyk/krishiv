@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+
+<section class="py-16 md:py-20 bg-cream">
+  <div class="max-w-md mx-auto px-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+      <h1 class="font-playfair text-3xl font-bold text-gray-800 mb-2">Login</h1>
+      <p class="text-gray-500 mb-6">Sign in to place orders faster.</p>
+
+      <form action="/login" method="POST" class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Email</label>
+          <input type="email" name="email" placeholder="you@example.com"
+                 autocomplete="email"
+                 class="mt-1 w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon" />
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Phone</label>
+          <input type="tel" name="phone" placeholder="10-digit mobile"
+                 pattern="[6-9][0-9]{9}"
+                 autocomplete="tel"
+                 class="mt-1 w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon" />
+          <p class="text-xs text-gray-500 mt-1">Enter either email or phone.</p>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Password</label>
+          <input type="password" name="password" placeholder="Your password" required
+                 autocomplete="current-password"
+                 class="mt-1 w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon" />
+        </div>
+
+
+        <button type="submit"
+                class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-3 rounded-xl transition-all text-sm">
+          Login
+        </button>
+      </form>
+
+      <div class="mt-5 text-sm text-gray-500 flex items-center justify-between gap-4">
+        <span>
+          New here? <a href="/signup" class="text-maroon font-semibold hover:underline">Create an account</a>
+        </span>
+        <a href="/forgot-password" class="text-maroon font-semibold hover:underline text-xs sm:text-sm">Forgot password?</a>
+      </div>
+
+
+      <div class="mt-4 text-xs text-gray-400">
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+

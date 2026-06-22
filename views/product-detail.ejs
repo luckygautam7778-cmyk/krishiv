@@ -1,0 +1,266 @@
+ <%- include('partials/header') %>
+
+<!-- Breadcrumb -->
+<div class="bg-cream-dark border-b border-gray-200 py-3 px-4">
+  <div class="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-500">
+    <a href="/" class="hover:text-maroon transition-colors">Home</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <a href="/products" class="hover:text-maroon transition-colors">Shop</a>
+    <i class="fas fa-chevron-right text-xs"></i>
+    <span class="text-maroon font-medium truncate max-w-[200px]"><%= product.name %></span>
+  </div>
+</div>
+
+<section class="py-10 md:py-14 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+
+      <!-- ── IMAGES ── -->
+      <div>
+        <!-- Main Image -->
+        <div class="relative overflow-hidden rounded-2xl bg-gray-50 aspect-square shadow-md mb-4" id="mainImageContainer">
+          <% if (product.images && product.images.length > 0) { %>
+            <img id="mainImage" src="<%= product.images[0] %>" alt="<%= product.name %>"
+                 class="w-full h-full object-cover cursor-zoom-in" onclick="openLightbox(0)" />
+          <% } else { %>
+            <div class="w-full h-full flex items-center justify-center text-gray-300">
+              <i class="fas fa-image text-6xl"></i>
+            </div>
+          <% } %>
+          <% if (product.discountPercent > 0) { %>
+            <span class="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full">
+              -<%= product.discountPercent %>% OFF
+            </span>
+          <% } %>
+        </div>
+
+        <!-- Thumbnail Strip -->
+        <% if (product.images && product.images.length > 1) { %>
+          <div class="flex gap-3 overflow-x-auto pb-2">
+            <% product.images.forEach((img, i) => { %>
+              <button onclick="changeImage('<%= img %>', <%= i %>)"
+                      class="thumb-btn flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 <%= i === 0 ? 'border-maroon' : 'border-transparent hover:border-gold' %>">
+                <img src="<%= img %>" alt="Product image <%= i + 1 %>" class="w-full h-full object-cover" />
+              </button>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- ── DETAILS ── -->
+      <div class="flex flex-col">
+        <% if (product.category) { %>
+          <a href="/products?category=<%= product.category.slug %>" class="text-gold uppercase tracking-widest text-xs font-semibold mb-2 hover:text-gold-dark transition-colors">
+            <%= product.category.name %>
+          </a>
+        <% } %>
+
+        <h1 class="font-playfair text-3xl md:text-4xl font-bold text-gray-800 leading-tight mb-4"><%= product.name %></h1>
+
+        <!-- Price -->
+        <div class="flex items-baseline gap-3 mb-4">
+          <% if (product.discountPrice && product.discountPrice < product.price) { %>
+            <span class="text-3xl font-bold text-maroon font-playfair">₹<%= product.discountPrice %></span>
+            <span class="text-lg text-gray-400 line-through">₹<%= product.price %></span>
+            <span class="bg-red-100 text-red-600 text-sm font-bold px-2 py-0.5 rounded-full"><%= product.discountPercent %>% OFF</span>
+          <% } else { %>
+            <span class="text-3xl font-bold text-maroon font-playfair">₹<%= product.price %></span>
+          <% } %>
+        </div>
+
+        <!-- Stock -->
+        <div class="flex items-center gap-2 mb-5">
+          <% if (product.stock > 0) { %>
+            <span class="w-2.5 h-2.5 bg-green-500 rounded-full inline-block animate-pulse"></span>
+            <span class="text-green-600 text-sm font-medium">In Stock (<%= product.stock %> available)</span>
+          <% } else { %>
+            <span class="w-2.5 h-2.5 bg-red-500 rounded-full inline-block"></span>
+            <span class="text-red-500 text-sm font-medium">Out of Stock</span>
+          <% } %>
+        </div>
+
+        <hr class="border-gray-100 mb-5" />
+
+        <!-- Product Attributes -->
+        <div class="grid grid-cols-2 gap-3 mb-6 text-sm">
+          <% if (product.fabric) { %>
+            <div class="bg-cream rounded-xl p-3">
+              <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Fabric</p>
+              <p class="font-medium text-gray-700"><%= product.fabric %></p>
+            </div>
+          <% } %>
+          <% if (product.occasion) { %>
+            <div class="bg-cream rounded-xl p-3">
+              <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Occasion</p>
+              <p class="font-medium text-gray-700"><%= product.occasion %></p>
+            </div>
+          <% } %>
+          <% if (product.color) { %>
+            <div class="bg-cream rounded-xl p-3">
+              <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Color</p>
+              <p class="font-medium text-gray-700"><%= product.color %></p>
+            </div>
+          <% } %>
+          <% if (product.sizes && product.sizes.length > 0) { %>
+            <div class="bg-cream rounded-xl p-3">
+              <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Sizes</p>
+              <p class="font-medium text-gray-700"><%= product.sizes.join(', ') %></p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Quantity + Add to Cart -->
+        <% if (product.stock > 0) { %>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+              <button onclick="changeQty(-1)" class="w-10 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors text-lg font-bold">-</button>
+              <input type="number" id="qty" value="1" min="1" max="<%= product.stock %>" readonly
+                     class="w-12 text-center py-2 text-base font-semibold text-gray-700 border-x border-gray-200 focus:outline-none" />
+              <button onclick="changeQty(1)" class="w-10 h-11 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors text-lg font-bold">+</button>
+            </div>
+
+            <button onclick="addToCartDetail('<%= product._id %>')"
+                    class="flex-1 bg-maroon hover:bg-maroon-light text-white font-raleway font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg flex items-center justify-center gap-2">
+              <i class="fas fa-shopping-bag"></i> Add to Cart
+            </button>
+          </div>
+
+          <a href="https://wa.me/<%= settings?.whatsapp || '919876543210' %>?text=Hello!%20I%20want%20to%20order%20<%= encodeURIComponent(product.name) %>"
+             target="_blank"
+             class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-raleway font-semibold py-3 px-6 rounded-xl transition-all duration-200 mb-4">
+            <i class="fab fa-whatsapp text-lg"></i> Chat on WhatsApp
+          </a>
+        <% } else { %>
+          <div class="bg-gray-100 text-gray-500 py-4 px-6 rounded-xl text-center font-medium mb-4">
+            Currently Out of Stock
+          </div>
+        <% } %>
+
+        <!-- Description -->
+        <div class="bg-cream rounded-2xl p-5 mb-4">
+          <h3 class="font-playfair text-base font-semibold text-gray-700 mb-2">Description</h3>
+          <p class="text-gray-600 text-sm leading-relaxed"><%= product.description %></p>
+        </div>
+
+        <!-- Tags -->
+        <% if (product.tags && product.tags.length > 0) { %>
+          <div class="flex flex-wrap gap-2">
+            <% product.tags.forEach(tag => { %>
+              <a href="/products?search=<%= tag %>" class="text-xs bg-maroon-pale text-maroon px-3 py-1 rounded-full hover:bg-maroon hover:text-white transition-colors">#<%= tag %></a>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <% if (related && related.length > 0) { %>
+      <div class="mt-16">
+        <div class="text-center mb-8">
+          <h2 class="font-playfair text-2xl md:text-3xl font-bold text-gray-800">You May Also Like</h2>
+          <div class="mt-2 flex items-center justify-center gap-2">
+            <div class="h-px w-12 bg-gold"></div>
+            <i class="fas fa-star text-gold text-xs"></i>
+            <div class="h-px w-12 bg-gold"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <% related.forEach(p => { %>
+            <%- include('partials/product-card', { product: p }) %>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onclick="closeLightbox()">
+  <button class="absolute top-4 right-4 text-white text-3xl hover:text-gold transition-colors" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <button class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gold transition-colors" onclick="event.stopPropagation(); lightboxPrev()"><i class="fas fa-chevron-left"></i></button>
+  <img id="lightboxImg" src="" alt="Product" class="max-h-[90vh] max-w-[90vw] object-contain rounded-xl" onclick="event.stopPropagation()" />
+  <button class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-2xl hover:text-gold transition-colors" onclick="event.stopPropagation(); lightboxNext()"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+const images = <%- JSON.stringify(product.images || []) %>;
+let currentLightbox = 0;
+let currentThumb = 0;
+
+function changeImage(src, idx) {
+  document.getElementById('mainImage').src = src;
+  currentThumb = idx;
+  document.querySelectorAll('.thumb-btn').forEach((btn, i) => {
+    btn.className = btn.className.replace('border-maroon', 'border-transparent hover:border-gold');
+    if (i === idx) btn.className = btn.className.replace('border-transparent hover:border-gold', 'border-maroon');
+  });
+}
+
+function changeQty(delta) {
+  const input = document.getElementById('qty');
+  const max = <%= product.stock %> || 0;
+  let val = parseInt(input.value) + delta;
+  input.value = Math.min(Math.max(1, val), max);
+}
+
+function openLightbox(idx) {
+  currentLightbox = idx;
+  document.getElementById('lightboxImg').src = images[idx];
+  document.getElementById('lightbox').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function lightboxNext() {
+  currentLightbox = (currentLightbox + 1) % images.length;
+  document.getElementById('lightboxImg').src = images[currentLightbox];
+}
+function lightboxPrev() {
+  currentLightbox = (currentLightbox - 1 + images.length) % images.length;
+  document.getElementById('lightboxImg').src = images[currentLightbox];
+}
+
+function addToCartDetail(productId) {
+  const qty = parseInt(document.getElementById('qty').value);
+  fetch('/cart/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-csrf-token': window.csrfToken || ''
+    },
+    body: JSON.stringify({ productId, quantity: qty })
+  })
+  .then(async (r) => {
+    if (!r.ok) {
+      const txt = await r.text().catch(() => '');
+      console.error('[addToCartDetail] HTTP error', { status: r.status, statusText: r.statusText, body: txt });
+      showToast(`Failed to add to cart (HTTP ${r.status})`, 'error');
+      return null;
+    }
+    try {
+      return await r.json();
+    } catch (e) {
+      const txt = await r.text().catch(() => '');
+      console.error('[addToCartDetail] Non-JSON response', { body: txt });
+      showToast('Failed to add to cart (invalid server response)', 'error');
+      return null;
+    }
+  })
+  .then(data => {
+    if (!data) return;
+    if (data.success) {
+      showToast(data.message || 'Added to cart!', 'success');
+      document.getElementById('cartBadge')?.classList.remove('hidden');
+      if (document.getElementById('cartBadge')) document.getElementById('cartBadge').textContent = data.cartCount;
+    } else {
+      showToast(data.message || 'Failed to add', 'error');
+    }
+  });
+}
+</script>

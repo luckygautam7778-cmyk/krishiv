@@ -1,0 +1,226 @@
+<%- include('../partials/admin-header') %>
+
+<div class="max-w-3xl mx-auto">
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <h2 class="font-playfair text-xl font-bold text-gray-800 mb-6 pb-5 border-b border-gray-100 flex items-center gap-3">
+      <i class="fas fa-store text-maroon text-base"></i> Business Settings
+    </h2>
+
+    <form action="/admin/settings" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+      <!-- Business Info -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Business Information</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Business Name</label>
+            <input type="text" name="businessName" value="<%= settings.businessName %>"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Tagline</label>
+            <input type="text" name="tagline" value="<%= settings.tagline %>"
+                   placeholder="Traditional Elegance, Modern Grace"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+            <input type="text" name="phone" value="<%= settings.phone %>"
+                   placeholder="e.g., +91 98765 43210"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">WhatsApp Number</label>
+            <input type="text" name="whatsapp" value="<%= settings.whatsapp %>"
+                   placeholder="919876543210 (with country code, no +)"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            <p class="text-xs text-gray-400 mt-1">Include country code without + (e.g., 919876543210)</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Notification Email (Admin)</label>
+            <input type="email" name="notificationEmail" value="<%= settings.notificationEmail %>"
+                   placeholder="admin@poshaak.in"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Notification WhatsApp Phone (Admin)</label>
+            <input type="text" name="notificationWhatsAppPhone" value="<%= settings.notificationWhatsAppPhone %>"
+                   placeholder="919876543210 (with country code, no +)"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            <p class="text-xs text-gray-400 mt-1">If empty, we fall back to the Business WhatsApp number.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+            <input type="email" name="email" value="<%= settings.email %>"
+                   placeholder="hello@poshaak.in"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
+            <input type="text" name="address" value="<%= settings.address %>"
+                   placeholder="Shop No., Street, Area"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">City</label>
+            <input type="text" name="city" value="<%= settings.city %>"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">State</label>
+            <input type="text" name="state" value="<%= settings.state %>"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-gray-100" />
+
+      <!-- Payment Settings -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Payment Settings</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="flex items-start gap-3 bg-gray-50 border border-gray-100 rounded-xl p-4 cursor-pointer">
+              <input type="checkbox" name="enableUPIPayments" class="mt-1"
+                     <%= settings?.enableUPIPayments ? 'checked' : '' %> />
+              <div>
+                <p class="text-sm font-semibold text-gray-800">Enable UPI Payments</p>
+                <p class="text-xs text-gray-500 mt-1">When enabled, Business UPI ID and Payment Business Name become required.</p>
+              </div>
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Business UPI ID</label>
+            <input type="text" name="upiId" value="<%= settings.upiId %>" placeholder="abc@oksbi"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Payment Business Name</label>
+            <input type="text" name="paymentBusinessName" value="<%= settings.paymentBusinessName %>" placeholder="Your payment receiver name"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-gray-100" />
+
+      <!-- About Us -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">About & SEO</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">About Us</label>
+            <textarea name="aboutUs" rows="5" placeholder="Describe your business, story, and values..."
+                      class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all resize-none"><%= settings.aboutUs %></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Meta Description (SEO)</label>
+            <textarea name="metaDescription" rows="2"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all resize-none"><%= settings.metaDescription %></textarea>
+            <p class="text-xs text-gray-400 mt-1">Shown in Google search results (140-160 chars ideal)</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-gray-100" />
+
+      <!-- Social & Shipping -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Social Media & Shipping</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5"><i class="fab fa-facebook text-blue-500 mr-1"></i> Facebook URL</label>
+            <input type="url" name="facebook" value="<%= settings.facebook %>"
+                   placeholder="https://facebook.com/yourpage"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5"><i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram URL</label>
+            <input type="url" name="instagram" value="<%= settings.instagram %>"
+                   placeholder="https://instagram.com/yourhandle"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Shipping Charge (₹)</label>
+            <input type="number" name="shippingCharge" value="<%= settings.shippingCharge %>" min="0" step="0.01"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Free Shipping Above (₹)</label>
+            <input type="number" name="freeShippingAbove" value="<%= settings.freeShippingAbove %>" min="0"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-gray-100" />
+
+      <!-- Logo Upload -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Brand Logo</h3>
+        <% if (settings.logo) { %>
+          <div class="mb-3 flex items-center gap-3">
+            <img src="<%= settings.logo %>" alt="Current Logo" class="h-16 object-contain border border-gray-100 rounded-xl p-2 bg-gray-50" />
+            <p class="text-sm text-gray-500">Current logo</p>
+          </div>
+        <% } %>
+        <input type="file" name="logo" accept="image/*"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+        <p class="text-xs text-gray-400 mt-1">Recommended: transparent PNG, max 200×80px. Leave empty to keep current.</p>
+      </div>
+
+      <button type="submit" class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-4 rounded-xl transition-all hover:shadow-lg flex items-center justify-center gap-2 text-base">
+        <i class="fas fa-save"></i> Save All Settings
+      </button>
+
+      <hr class="border-gray-100" />
+
+      <!-- Change Password -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Change Password</h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Current Password</label>
+            <input type="password" name="currentPassword" autocomplete="current-password"
+                   placeholder="Enter current password"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+            <input type="password" name="newPassword" autocomplete="new-password"
+                   placeholder="Minimum 8 characters"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+            <p class="text-xs text-gray-400 mt-1">Minimum 8 characters</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password</label>
+            <input type="password" name="confirmNewPassword" autocomplete="new-password"
+                   placeholder="Re-enter new password"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+          </div>
+        </div>
+
+        <!-- Dedicated submit for password change -->
+        <input type="hidden" name="action" value="change_password" />
+
+        <button type="submit"
+                class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-4 rounded-xl transition-all hover:shadow-lg flex items-center justify-center gap-2 text-base mt-4">
+          <i class="fas fa-key"></i> Update Password
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
+

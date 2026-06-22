@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<section class="py-10 md:py-14 bg-cream">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+      <h1 class="font-playfair text-3xl font-bold text-gray-800 mb-2">Your Order History</h1>
+      <p class="text-gray-500 mb-6">Enter your phone number to see your recent orders.</p>
+
+      <form method="GET" action="/orders" class="flex flex-col sm:flex-row gap-3 mb-8">
+        <input
+          type="tel"
+          name="phone"
+          value="<%= phone || '' %>"
+          placeholder="Phone number (10 digits)"
+          class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon"
+          required
+          pattern="[6-9][0-9]{9}"
+        />
+        <button type="submit" class="bg-maroon hover:bg-maroon-light text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm">
+          Search
+        </button>
+      </form>
+
+      <% if (orders && orders.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr class="text-gray-600 uppercase text-xs">
+                <th class="text-left px-4 py-3">Order</th>
+                <th class="text-left px-4 py-3">Date</th>
+                <th class="text-left px-4 py-3">Status</th>
+                <th class="text-left px-4 py-3">Total</th>
+                <th class="text-left px-4 py-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order => { %>
+                <tr class="border-t border-gray-100 hover:bg-gray-50/60">
+                  <td class="px-4 py-3 font-semibold text-maroon">#<%= order.orderNumber %></td>
+                  <td class="px-4 py-3 text-gray-500"><%= new Date(order.createdAt).toLocaleDateString('en-IN') %></td>
+                  <td class="px-4 py-3">
+                    <span class="text-xs px-2.5 py-1 rounded-full font-semibold
+                      <%= order.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                         order.status === 'Confirmed' ? 'bg-blue-100 text-blue-700' :
+                         order.status === 'Packed' ? 'bg-yellow-100 text-yellow-700' :
+                         order.status === 'Shipped' ? 'bg-purple-100 text-purple-700' :
+                         order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+                         order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                         'bg-red-100 text-red-700' %>">
+                      <%= order.status %>
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 font-semibold">₹<%= order.totalAmount.toFixed(0) %></td>
+                  <td class="px-4 py-3">
+                    <a class="text-maroon font-semibold hover:underline" href="/track/<%= order.orderNumber %>">Track</a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="text-center py-10 text-gray-500">
+          <i class="fas fa-box-open text-4xl mb-3 block text-gray-400"></i>
+          <p>No orders found.</p>
+        </div>
+      <% } %>
+
+      <div class="mt-6 text-xs text-gray-400">
+        Note: This demo order history searches by phone number (no customer login is implemented yet).
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+

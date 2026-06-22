@@ -1,0 +1,337 @@
+/* ============================================================
+   POSHAAK - Main Stylesheet
+   Custom CSS complementing Tailwind CSS
+   ============================================================ */
+
+/* ── FONTS & ROOT ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --maroon:       #7B1536;
+  --maroon-light: #9B2048;
+  --maroon-dark:  #5C0F28;
+  --maroon-pale:  #F5E6EC;
+  --gold:         #C9A84C;
+  --gold-light:   #DFC06A;
+  --gold-dark:    #A8882E;
+  --gold-pale:    #FBF5E6;
+  --cream:        #FFF8F0;
+  --cream-dark:   #F5E6D3;
+}
+
+/* ── GLOBAL ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background-color: var(--cream);
+  color: #1a0a00;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: var(--maroon); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--maroon-dark); }
+
+/* ── NAVBAR LINKS ──────────────────────────────────────────── */
+.nav-link {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #374151;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.2s;
+  letter-spacing: 0.03em;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+  border-radius: 1px;
+}
+.nav-link:hover,
+.nav-link.active { color: var(--maroon); }
+.nav-link:hover::after,
+.nav-link.active::after { width: 100%; }
+
+/* ── HERO SLIDER ────────────────────────────────────────────── */
+.hero-slider { position: relative; }
+.hero-slide {
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+.hero-slide.active,
+.hero-slide[style*="opacity: 1"] {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* ── PRODUCT CARDS ──────────────────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.4s ease forwards; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slideUp 0.5s ease forwards; }
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(201, 168, 76, 0); }
+}
+
+/* ── TOAST NOTIFICATION ─────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  bottom: 80px;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.toast {
+  background: #1a1a2e;
+  color: white;
+  padding: 0.85rem 1.35rem;
+  border-radius: 0.95rem;
+  font-size: 0.875rem;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  box-shadow: 0 16px 45px rgba(0,0,0,0.22);
+  animation: fadeIn 0.3s ease;
+  pointer-events: auto;
+  max-width: 340px;
+}
+.toast.success { background: #15803d; border-left: 3px solid #4ade80; }
+.toast.error   { background: #b91c1c; border-left: 3px solid #f87171; }
+
+
+/* ── SECTION DIVIDER ─────────────────────────────────────────── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+/* ── CART BADGE PULSE ─────────────────────────────────────────── */
+#cartBadge {
+  animation: pulse-border 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cartBadge {
+    animation: none;
+  }
+}
+
+
+/* ── PRODUCT GRID RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+}
+
+/* ── IMAGE ZOOM ───────────────────────────────────────────────── */
+#mainImage { transition: transform 0.3s ease; }
+#mainImage:hover { transform: scale(1.03); }
+
+/* ── FORM FOCUS RING ─────────────────────────────────────────── */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--maroon) !important;
+  box-shadow: 0 0 0 4px rgba(123, 21, 54, 0.10);
+}
+
+
+/* ── BUTTON RIPPLE ───────────────────────────────────────────── */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── PRINT STYLES ────────────────────────────────────────────── */
+@media print {
+  nav, footer, .whatsapp-btn, #mobileMenuBtn { display: none !important; }
+}
+
+/* ── UTILITY CLASSES ─────────────────────────────────────────── */
+.text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ── CATEGORY CARD HOVER ─────────────────────────────────────── */
+.category-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.category-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(123, 21, 54, 0.15); }
+
+/* ── RESPONSIVE TABLES ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+}
+
+/* ── PREMIUM UI ENHANCEMENTS ────────────────────────────────── */
+
+/* Smooth Transitions (targeted to avoid visual jank) */
+a, button {
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+input, select, textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.group, img {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Honor reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+
+
+/* Hover effects for product card images */
+.group:hover img {
+  transform: scale(1.06);
+}
+
+/* Premium card hover shadowing */
+.group:hover {
+  box-shadow: 0 20px 25px -5px rgba(123, 21, 54, 0.08), 0 10px 10px -5px rgba(123, 21, 54, 0.04);
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+/* Soft glow focus for all fields */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--maroon-light) !important;
+  box-shadow: 0 0 0 4px rgba(155, 32, 72, 0.12) !important;
+}
+
+/* Ensure keyboard focus is visible (links/buttons) */
+a:focus-visible, button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.35);
+  border-radius: 0.75rem;
+}
+
+
+/* Enhancing Toast Notifications */
+.toast {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.toast.success {
+  background: rgba(21, 128, 61, 0.9);
+  border-left: 4px solid #4ade80;
+}
+.toast.error {
+  background: rgba(185, 28, 28, 0.9);
+  border-left: 4px solid #f87171;
+}
+
+/* Interactive elements micro-animations */
+button:active, a:active {
+  transform: scale(0.97);
+}
+
+/* Smooth fade-in slide animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast {
+  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Premium Scrollbar */
+:root {
+  color-scheme: light;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--maroon);
+  border-radius: 9999px;
+  border: 2px solid var(--cream);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--maroon-light);
+}
+
+/* Navigation Links premium layout */
+.nav-link {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* Checkout step panels styling */
+#step-delivery, #step-upload, #step-confirm {
+  transition: opacity 0.5s ease-in-out;
+  border: 1px solid rgba(123, 21, 54, 0.05);
+}

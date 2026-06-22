@@ -1,0 +1,116 @@
+<%- include('../partials/admin-header') %>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Add Banner -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    <h2 class="font-playfair text-lg font-bold text-gray-800 mb-5">Add New Banner</h2>
+    <form action="/admin/banners/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <div>
+
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Banner Title <span class="text-red-500">*</span></label>
+        <input type="text" name="title" required placeholder="e.g., New Janmashtami Collection"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Subtitle</label>
+        <input type="text" name="subtitle" placeholder="Short description for banner"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Banner Image <span class="text-red-500">*</span></label>
+        <input type="file" name="image" required accept="image/*"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+        <p class="text-xs text-gray-400 mt-1">Recommended: 1920×800px, landscape</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Link (URL)</label>
+        <input type="text" name="link" value="/products" placeholder="/products or /products?category=poshak"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Button Text</label>
+        <input type="text" name="buttonText" value="Shop Now"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">Sort Order</label>
+        <input type="number" name="sortOrder" value="0" min="0"
+               class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-maroon transition-all" />
+      </div>
+      <button type="submit" class="w-full bg-maroon hover:bg-maroon-light text-white font-semibold py-3 rounded-xl transition-all hover:shadow-md flex items-center justify-center gap-2 text-sm">
+        <i class="fas fa-plus"></i> Add Banner
+      </button>
+    </form>
+  </div>
+
+  <!-- Banners List -->
+  <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <h2 class="font-playfair text-lg font-bold text-gray-800">All Banners (<%= banners.length %>)</h2>
+      <p class="text-xs text-gray-400 mt-0.5">Active banners appear on homepage slider</p>
+    </div>
+
+    <% if (banners.length === 0) { %>
+      <div class="text-center py-12 text-gray-300">
+        <i class="fas fa-images text-4xl mb-3 block"></i>
+        <p class="text-sm text-gray-400">No banners yet. Add one!</p>
+      </div>
+    <% } else { %>
+      <div class="divide-y divide-gray-50">
+        <% banners.forEach(banner => { %>
+          <div class="p-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors">
+            <!-- Preview -->
+            <div class="w-24 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+              <img src="<%= banner.image %>" alt="<%= banner.title %>" class="w-full h-full object-cover" />
+            </div>
+
+            <!-- Info -->
+            <div class="flex-grow min-w-0">
+              <p class="font-semibold text-gray-800 truncate"><%= banner.title %></p>
+              <% if (banner.subtitle) { %><p class="text-xs text-gray-400 truncate"><%= banner.subtitle %></p><% } %>
+              <p class="text-xs text-gray-400 mt-0.5">→ <%= banner.link %> • Order: <%= banner.sortOrder %></p>
+            </div>
+
+            <!-- Active Toggle -->
+            <button onclick="toggleBanner('<%= banner._id %>', this)"
+                    data-active="<%= banner.active %>"
+                    class="<%= banner.active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' %> text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0">
+              <%= banner.active ? '● Active' : '○ Inactive' %>
+            </button>
+
+            <!-- Delete -->
+            <button onclick="deleteBanner('<%= banner._id %>', <%= JSON.stringify(banner.title) %>)"
+                    class="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg flex items-center justify-center transition-colors flex-shrink-0">
+              <i class="fas fa-trash text-xs"></i>
+            </button>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
+<script>
+function deleteBanner(id, title) {
+  if (!confirm(`Delete banner "${title}"?`)) return;
+  fetch(`/admin/banners/${id}`, { method: 'DELETE' }).then(r => r.json()).then(data => {
+    if (data.success) { showAdminToast('Banner deleted', 'success'); setTimeout(() => location.reload(), 800); }
+    else showAdminToast(data.message, 'error');
+  });
+}
+function toggleBanner(id, btn) {
+  fetch(`/admin/banners/${id}/toggle`, { method: 'POST' }).then(r => r.json()).then(data => {
+    if (data.success) {
+      btn.dataset.active = data.active;
+      btn.textContent = data.active ? '● Active' : '○ Inactive';
+      btn.className = data.active
+        ? 'bg-green-100 text-green-700 hover:bg-green-200 text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0'
+        : 'bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex-shrink-0';
+    }
+  });
+}
+</script>

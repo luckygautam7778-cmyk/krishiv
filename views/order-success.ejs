@@ -1,0 +1,120 @@
+<%- include('partials/header') %>
+
+<section class="py-16 md:py-24 bg-cream min-h-[70vh] flex items-center">
+  <div class="max-w-2xl mx-auto px-4 text-center w-full">
+
+    <div class="w-28 h-28 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+      <i class="fas fa-check-circle text-green-500 text-6xl"></i>
+      <div class="absolute inset-0 rounded-full border-4 border-green-200 animate-ping opacity-30"></div>
+    </div>
+
+    <h1 class="font-playfair text-3xl md:text-4xl font-bold text-gray-800 mb-3">Order Placed Successfully!</h1>
+    <p class="text-gray-500 text-lg mb-2">Jai Shri Krishna! 🙏</p>
+    <p class="text-gray-500 text-sm mb-6">Payment Method: <strong><%= order.paymentMethod || 'N/A' %></strong></p>
+
+    <p class="text-gray-500 mb-8">Thank you for your order. We will dispatch your divine poshak soon!</p>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-left mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-playfair text-lg font-bold text-gray-800">Order Details</h2>
+        <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
+          <i class="fas fa-clock mr-1"></i><%= order.status %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-sm mb-5">
+        <div>
+          <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Order Number</p>
+          <p class="font-bold text-maroon text-base">#<%= order.orderNumber %></p>
+        </div>
+        <div>
+          <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Payment</p>
+          <p class="font-medium text-gray-700"><%= order.paymentMethod || 'Online Payment' %></p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Customer</p>
+          <p class="font-medium text-gray-700"><%= order.customer.name %></p>
+        </div>
+
+        <div>
+          <p class="text-gray-400 text-xs uppercase tracking-wider mb-0.5">Mobile</p>
+          <p class="font-medium text-gray-700"><%= order.customer.phone %></p>
+        </div>
+      </div>
+
+      <div class="bg-cream rounded-xl p-3 mb-5">
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-1">Delivery Address</p>
+        <p class="text-gray-700 text-sm"><%= order.customer.address %>, <%= order.customer.city %>, <%= order.customer.state %> - <%= order.customer.pincode %></p>
+      </div>
+
+      <h3 class="font-semibold text-gray-700 text-sm mb-3 border-t border-gray-100 pt-4">Ordered Items</h3>
+      <div class="space-y-3">
+        <% order.items.forEach(item => { %>
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
+              <% if (item.productImage) { %>
+                <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="w-full h-full object-cover" />
+              <% } else { %>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center"><i class="fas fa-image text-gray-300 text-xs"></i></div>
+              <% } %>
+            </div>
+            <div class="flex-grow">
+              <p class="text-sm font-medium text-gray-700"><%= item.productName %></p>
+              <p class="text-xs text-gray-400">Qty: <%= item.quantity %> × ₹<%= item.price.toFixed(0) %></p>
+            </div>
+            <p class="text-sm font-bold text-gray-700">₹<%= item.totalPrice.toFixed(0) %></p>
+          </div>
+        <% }) %>
+      </div>
+
+      <div class="border-t border-gray-100 mt-4 pt-4">
+        <% if (order.shippingCharge > 0) { %>
+          <div class="flex justify-between text-sm text-gray-500 mb-1">
+            <span>Subtotal</span><span>₹<%= order.subtotal.toFixed(0) %></span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-500 mb-2">
+            <span>Shipping</span><span>₹<%= order.shippingCharge.toFixed(0) %></span>
+          </div>
+        <% } %>
+        <div class="flex justify-between font-bold text-xl">
+          <span class="font-playfair text-gray-800">Total Amount</span>
+          <span class="text-maroon font-playfair">₹<%= order.totalAmount.toFixed(0) %></span>
+        </div>
+      </div>
+    </div>
+
+    <% const isCOD = (order.paymentMethod === 'Cash On Delivery' || (order.paymentStatus && String(order.paymentStatus).toLowerCase().includes('pending'))); %>
+
+    <div class="bg-gold-pale border border-gold/30 rounded-2xl p-5 text-sm text-gray-600 mb-8">
+      <i class="fas fa-info-circle text-gold text-lg mb-2 block"></i>
+      <% if (isCOD) { %>
+        <p class="font-medium text-gray-700 mb-1">Cash on Delivery confirmed</p>
+        <p>Your order total is <strong>₹<%= order.totalAmount.toFixed(0) %></strong>. Please keep ready the cash/UPI payment at delivery.</p>
+      <% } else { %>
+        <p class="font-medium text-gray-700 mb-1">Share payment screenshot</p>
+        <p>Please share the screenshot of your payment receipt of <strong>₹<%= order.totalAmount.toFixed(0) %></strong> on WhatsApp for instant confirmation. We will dispatch your order soon!</p>
+      <% } %>
+    </div>
+
+
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="/products" class="inline-flex items-center justify-center gap-2 bg-maroon hover:bg-maroon-light text-white px-8 py-3.5 rounded-full font-raleway font-semibold transition-all hover:shadow-lg text-sm">
+        <i class="fas fa-shopping-bag"></i> Continue Shopping
+      </a>
+      <% const waNumber = ((settings?.whatsapp || '919876543210') + '').replace(/\D/g, ''); %>
+      <a href="https://wa.me/<%= waNumber %>?text=Hello!%20My%20order%20number%20is%20<%= order.orderNumber %>%20and%20I%20want%20to%20track%20it." target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-3.5 rounded-full font-raleway font-semibold transition-all text-sm">
+        <i class="fab fa-whatsapp text-lg"></i> Track on WhatsApp
+      </a>
+    </div>
+
+    <div class="mt-6">
+      <a href="/track/<%= order.orderNumber %>" class="text-maroon underline text-sm font-semibold">Track on website</a>
+      <span class="text-gray-400 text-sm"> · </span>
+      <a href="/orders?phone=<%= order.customer.phone %>" class="text-gray-700 underline text-sm font-semibold">View order history</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
