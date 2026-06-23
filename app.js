@@ -9,11 +9,15 @@ const connectDB = require('./config/db');
 
 const app = express();
 
-// Connect to MongoDB and bootstrap admin
+// Connect to MongoDB and bootstrap admin (deterministic; avoid accidental double-run)
+let didBootstrapAdmin = false;
 connectDB().then(() => {
+  if (didBootstrapAdmin) return;
+  didBootstrapAdmin = true;
   const bootstrapAdmin = require('./utils/bootstrapAdmin');
   bootstrapAdmin();
 });
+
 
 // View engine setup
 app.set('view engine', 'ejs');
