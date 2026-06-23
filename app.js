@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo').MongoStore;
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const path = require('path');
@@ -8,8 +9,11 @@ const connectDB = require('./config/db');
 
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB and bootstrap admin
+connectDB().then(() => {
+  const bootstrapAdmin = require('./utils/bootstrapAdmin');
+  bootstrapAdmin();
+});
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -29,16 +33,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 // This ensures secure cookies behave correctly.
 app.set('trust proxy', 1);
 
-// Session configuration
+// Session configuration using connect-mongo
 app.use(session({
   secret: process.env.SESSION_SECRET || 'poshaak-secret-key-2024',
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/poshaak',
+    ttl: 24 * 60 * 60 // 1 day
+  }),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: 'lax'
   }
 }));
 
